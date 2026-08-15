@@ -174,7 +174,7 @@ a { color: var(--cold-ink); }
 .post[data-open="true"] .caret { transform: rotate(90deg); }
 
 /* ============ expanded body ============ */
-.body { padding: 0 14px 14px; }
+.body { padding: 0 20px 18px; }
 .divider { height: 1px; background: var(--rule-soft); margin: 2px 0 16px; }
 
 .brief { display: flex; flex-direction: column; gap: 11px; max-width: var(--maxread); }
@@ -259,9 +259,10 @@ details.dd > summary:hover { color: var(--ink); }
   font-family: var(--font-mono); font-size: 9.5px; text-decoration: none;
   color: var(--cold); background: var(--cold-soft); border-radius: 2px;
   padding: 1px 3px; margin-left: 2px; vertical-align: 1.5px; line-height: 1.4;
-  border: 1px solid transparent;
+  border: 1px solid transparent; cursor: pointer;
 }
 .cite:hover { border-color: color-mix(in srgb, var(--cold) 45%, transparent); }
+.cw.open .cite { border-color: var(--cold); }
 .pop {
   position: absolute; bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%);
   width: 244px; background: var(--surface); color: var(--ink);
@@ -270,12 +271,14 @@ details.dd > summary:hover { color: var(--ink); }
   opacity: 0; visibility: hidden; transition: opacity .12s; z-index: 60; pointer-events: none;
   text-align: left; text-transform: none; letter-spacing: 0;
 }
-.cw:hover .pop, .cw:focus-within .pop { opacity: 1; visibility: visible; }
+/* v19: tap-to-open — hover fails on touch, and the marker itself no longer
+   navigates; the popup carries the real link instead */
+.cw:hover .pop, .cw:focus-within .pop, .cw.open .pop { opacity: 1; visibility: visible; pointer-events: auto; }
 .pop-o {
   font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase;
   color: var(--cold); display: block; margin-bottom: 3px;
 }
-.pop-u { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); display: block; margin-top: 5px; word-break: break-all; }
+.pop-u { font-family: var(--font-mono); font-size: 10px; color: var(--cold-ink); display: block; margin-top: 5px; word-break: break-all; text-decoration: underline; text-underline-offset: 2px; }
 
 /* ============ the gap + question grid ============ */
 .gap { display: flex; align-items: center; gap: 10px; margin: 24px 0 12px; }
@@ -283,22 +286,45 @@ details.dd > summary:hover { color: var(--ink); }
 .gap-note { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); }
 .gap-rule { flex: 1; height: 1px; background: var(--rule); }
 
-.qgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-.qtile {
-  text-align: left; padding: 12px; border: 1px solid var(--rule); border-radius: 6px;
-  background: var(--surface-2); display: flex; flex-direction: column; gap: 9px;
-  transition: border-color .12s, background .12s;
+/* v17: the gap is a conversation. Your chosen question renders as a sent
+   bubble, the cold answer as a received one, and the next questions arrive
+   as quick-reply pills — deeper first, then change-direction. The
+   transcript accumulates, so the reader's line of inquiry stays visible. */
+.msg { max-width: 92%; border-radius: 14px; margin-top: 10px; }
+/* v18 type theme: three voices, three fonts. The slab display is the
+   record's frame (headlines, structure); the mono is measurement (meta,
+   labels); the conversation — the reader asking, the record answering —
+   reads in the body sans at messaging scale. Bubbles and pills therefore
+   carry --font-body, never the display face. */
+.msg-you {
+  margin-left: auto; width: fit-content; background: var(--cold); color: var(--paper);
+  border-bottom-right-radius: 4px; padding: 9px 13px;
+  font-family: var(--font-body); font-size: 14px; font-weight: 600; line-height: 1.45;
+  scroll-margin-top: 104px;
 }
-.qtile:hover { border-color: color-mix(in srgb, var(--cold) 45%, var(--rule)); }
-.qtile[aria-selected="true"] { background: var(--cold-soft); border-color: var(--cold); }
-.qtile-top { display: flex; align-items: center; gap: 8px; }
-.qtext { font-family: var(--font-display); font-size: 15px; line-height: 1.3; letter-spacing: -.005em; text-wrap: pretty; }
+.msg-t {
+  margin-right: auto; background: var(--surface-2); border: 1px solid var(--rule);
+  border-bottom-left-radius: 4px; padding: 13px 15px;
+}
+.msg-t > p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); max-width: var(--maxread); }
+.msg-t .ans { margin-top: 0; background: none; border: none; padding: 0; border-radius: 0; }
+.msg-t .deep-m { margin-top: 9px; }
+.chip-h { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin: 16px 0 0; }
+.chat-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.chip-q {
+  text-align: left; border: 1px solid color-mix(in srgb, var(--cold) 55%, var(--rule));
+  color: var(--cold-ink); border-radius: 16px; padding: 8px 13px; background: var(--surface);
+  font-family: var(--font-body); font-size: 13.5px; font-weight: 500; line-height: 1.4; max-width: 100%;
+  display: flex; align-items: baseline; gap: 10px; transition: background .12s, border-color .12s;
+}
+.chip-q:hover { background: var(--cold-soft); border-color: var(--cold); }
+.chip-q .chip-m { flex: none; }
+.chat-done { font-size: 12.5px; color: var(--ink-3); margin-top: 14px; }
 .lens {
   font-family: var(--font-body); font-size: 11.5px; letter-spacing: .01em;
   color: var(--ink-2); border: 1px solid var(--rule); border-radius: 3px; padding: 2px 7px;
   white-space: nowrap; background: var(--surface); cursor: help;
 }
-.qtile[aria-selected="true"] .lens { border-color: color-mix(in srgb, var(--cold) 40%, transparent); }
 
 /* record evolution — the two-track record made visible: claims enter as
    developing and graduate to settled, or get revised in the open */
@@ -406,14 +432,15 @@ details.onramp > summary { padding: 10px 14px; }
   border-radius: 4px; padding: 9px 11px; max-width: var(--maxread);
 }
 .prov b { color: var(--cold-ink); font-weight: 600; }
-.ans-lead { font-size: 16px; line-height: 1.5; max-width: var(--maxread); border-left: 2px solid var(--cold); padding-left: 13px; }
+.ans-lead { font-size: 14.5px; line-height: 1.5; max-width: var(--maxread); border-left: 2px solid var(--cold); padding-left: 13px; font-weight: 500; }
 .sub { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
 .facts { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; max-width: var(--maxread); }
-.facts li { display: grid; grid-template-columns: 13px 1fr; gap: 8px; font-size: 14.5px; line-height: 1.5; }
+.facts li { display: grid; grid-template-columns: 13px 1fr; gap: 8px; font-size: 14px; line-height: 1.5; }
 .facts li::before { content: "—"; color: var(--cold); font-family: var(--font-mono); font-size: 11px; line-height: 1.8; }
-.txt { font-size: 14.5px; line-height: 1.5; max-width: var(--maxread); color: var(--ink-2); }
+.txt { font-size: 14px; line-height: 1.5; max-width: var(--maxread); color: var(--ink-2); }
 .txt b, .facts b { color: var(--ink); font-weight: 600; }
 .blk-hot { border-left: 2px solid var(--hot); padding-left: 13px; }
+.blk-cold { border-left: 2px solid var(--cold); padding-left: 13px; }
 .quote {
   border-left: 2px solid var(--rule); padding-left: 13px; max-width: var(--maxread);
   font-family: var(--font-display); font-size: 15px; line-height: 1.45; color: var(--ink);
@@ -456,22 +483,11 @@ details.onramp > summary { padding: 10px 14px; }
 .hist[open] summary::before { content: "⌄ "; }
 .hist-row { font-size: 11.5px; color: var(--ink-3); padding: 4px 0 4px 13px; border-left: 1px solid var(--rule-soft); margin-left: 3px; }
 .ver { font-variant-numeric: tabular-nums; }
-.deeper { border-top: 1px dashed var(--rule); padding-top: 14px; }
-.deep-list { display: flex; flex-direction: column; gap: 8px; }
-.chip {
-  font-family: var(--font-body); font-size: 14px; text-align: left; color: var(--cold-ink);
-  background: var(--cold-soft); border: 1px solid color-mix(in srgb, var(--cold) 25%, transparent);
-  padding: 9px 12px; border-radius: 4px; line-height: 1.35;
-  display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
-}
-.chip:hover { background: color-mix(in srgb, var(--cold) 16%, var(--surface)); }
 .chip-m { font-family: var(--font-mono); font-size: 10px; opacity: .65; flex: none; font-variant-numeric: tabular-nums; }
 .working { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); letter-spacing: .04em; display: flex; align-items: center; gap: 8px; padding: 6px 0; }
 .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cold); animation: pulse 1s ease-in-out infinite; }
 @keyframes pulse { 0%,100% { opacity: .25; } 50% { opacity: 1; } }
-.deep-a { background: var(--surface); border: 1px solid var(--rule); border-radius: 5px; padding: 13px; }
-.deep-q { font-family: var(--font-display); font-size: 14.5px; line-height: 1.3; margin-bottom: 8px; }
-.deep-t { font-size: 14.5px; line-height: 1.6; max-width: var(--maxread); color: var(--ink-2); }
+.deep-t { font-size: 14px; line-height: 1.55; max-width: var(--maxread); color: var(--ink-2); }
 .deep-t p { margin: 0 0 11px; }
 .deep-t p:last-child { margin-bottom: 0; }
 .deep-t b { color: var(--ink); font-weight: 600; }
@@ -530,10 +546,10 @@ details.onramp > summary { padding: 10px 14px; }
 
 @media (max-width: 640px) {
   .head { grid-template-columns: 54px 1fr 14px; gap: 11px; padding: 12px; }
+  .body { padding: 0 16px 16px; }
   .thumb { width: 54px; height: 54px; }
   .thumb svg { width: 32px; height: 32px; }
   .htitle { font-size: 17px; }
-  .qgrid { grid-template-columns: 1fr; }
   .ask-row { grid-template-columns: 1fr auto; }
   .ask-row .ask-h { grid-column: 1 / -1; margin-bottom: 2px; }
   .tagline { display: none; }
@@ -9913,8 +9929,7 @@ const feedEl = document.getElementById('feed');
 const topEl  = document.getElementById('topics');
 let filter = 'all';
 const openPosts = new Set();
-const openQ = {};              // storyId -> question index
-const deepDone = new Set();    // "storyId::qIdx::deeperIdx" already researched
+const chatSeq = {};            // storyId -> ordered asks: 'q<qIdx>' | 'd<qIdx>-<dIdx>'
 const extraComments = {};
 /* votes/reactions/flag state removed in the static-site pass (Aug 14) */
 let intake = null;             // pasted-URL pipeline state
@@ -9941,9 +9956,9 @@ function cites(story, arr) {
   return arr.map(n => {
     const r = story.refs[n - 1];
     if (!r) return '';
-    return `<span class="cw"><a class="cite" href="${esc(r.u)}" target="_blank" rel="noopener noreferrer">${n}</a>` +
+    return `<span class="cw"><button class="cite" data-cite="1" aria-label="Source ${n}: ${esc(r.o)}">${n}</button>` +
       `<span class="pop" role="tooltip"><span class="pop-o">${esc(r.o)}</span>${esc(r.t)}` +
-      `<span class="pop-u">${esc(r.u.replace(/^https?:\/\//, ''))}</span></span></span>`;
+      `<a class="pop-u" href="${esc(r.u)}" target="_blank" rel="noopener noreferrer">${esc(r.u.replace(/^https?:\/\//, ''))} ↗</a></span></span>`;
   }).join('');
 }
 /* Avoidance is an editorial judgement, not a measurement. It was previously
@@ -11162,11 +11177,6 @@ function numsRow(s) {
 }
 
 function body(s) {
-  const qi = openQ[s.id];
-  /* Tiles sort by heat so the genuinely-avoided questions lead; the rest
-     advertise the adjudicated split instead of a weaker avoidance claim.
-     data-q keeps the original index, so answers stay correctly wired. */
-  const qOrder = s.questions.map((q, i) => [q, i]).sort((a, b) => b[0].heat - a[0].heat);
   return `<div class="body">
     <div class="divider"></div>
     <div class="tag-row"><span class="brief-tag">${readTag(s)}</span>
@@ -11187,13 +11197,7 @@ function body(s) {
       <span class="gap-rule"></span>
     </div>
 
-    <div class="qgrid">${qOrder.map(([q, i]) => `
-      <button class="qtile" aria-selected="${qi === i}" data-q="${i}">
-        <span class="qtile-top"><span class="lens" title="Question written from the ${esc(q.lens)} viewpoint">${esc(motive(q.lens))}</span>${q.heat === 3 ? heat(3) : splitChip()}</span>
-        <span class="qtext">${esc(q.q)}</span>
-      </button>`).join('')}</div>
-
-    ${qi != null && s.questions[qi] ? answer(s, s.questions[qi], qi) : ''}
+    ${chatFlow(s)}
 
     ${connRail(s)}
   </div>`;
@@ -11223,14 +11227,13 @@ function openSources(s) {
 function closeSources() { modalRoot.innerHTML = ''; document.body.style.overflow = ''; }
 
 function answer(s, q, i) {
-  const key = s.id + '::' + i, a = q.ans;
+  const a = q.ans;
   return `<div class="ans">
     <div class="ans-meta">
       <span><b>Research pass</b></span><span>${a.n} sources · ${a.p} primary</span>
       <span title="${esc(confBasis(a))}">confidence: <span class="${confClass(a.conf)}">${a.conf}</span>
         <span class="conf-why">${esc(confBasis(a))}</span></span><span>verified ${esc(a.v)}</span>
     </div>
-    <div class="ans-q">${esc(q.q)}</div>
     <div class="ans-lead">${a.lead}${cites(s, a.c)}</div>
 
     <div><div class="sub">What the record shows</div>
@@ -11238,20 +11241,63 @@ function answer(s, q, i) {
 
     ${a.quote ? `<div class="quote">“${esc(a.quote.t)}”<span class="quote-w">${esc(a.quote.w)}</span></div>` : ''}
 
-    <div class="blk-hot"><div class="sub">Where it's genuinely contested</div><div class="txt">${a.contested}</div></div>
-    <div><div class="sub">What would change this answer</div><div class="txt">${a.falsify}</div></div>
-
-    <div class="deeper"><div class="sub">Go deeper — pick a thread</div>
-      <div class="deep-list">${q.deeper.map((d, j) => {
-        const dk = key + '::' + j;
-        return deepDone.has(dk)
-          ? `<div class="deep-a"><div class="deep-q">${esc(d.q)}</div><div class="deep-t"><p>${d.a}${cites(s, d.c)}</p></div>
-             <div class="deep-m">${d.secs}s read</div></div>`
-          : `<button class="chip" data-deep="${dk}"><span>${esc(d.q)}</span><span class="chip-m">${d.secs}s</span></button>`;
-      }).join('')}</div>
-    </div>
-
+    <div class="blk-hot"><div class="sub">Where opinions diverge</div><div class="txt">${a.contested}</div></div>
+    <div class="blk-cold"><div class="sub">What would change this answer</div><div class="txt">${a.falsify}</div></div>
   </div>`;
+}
+
+/* v17: the gap as a conversation. The reader's chosen questions render as
+   sent bubbles, each cold answer as a received one, and what's still
+   askable arrives as quick-reply pills — the question's own go-deeper
+   threads first, then unasked gap questions as a change of direction.
+   The transcript accumulates per story (session state, like the old
+   open-tile state), so a reader's line of inquiry stays on the page. */
+function chatFlow(s) {
+  const seq = chatSeq[s.id] || [];
+  const askedQ = new Set(seq.filter(k => k[0] === 'q').map(k => +k.slice(1)));
+  const askedD = new Set(seq.filter(k => k[0] === 'd'));
+  /* pills sort by heat so the genuinely-avoided questions lead */
+  const qOrder = s.questions.map((q, i) => [q, i]).sort((a, b) => b[0].heat - a[0].heat);
+  /* v18: lens/heat chips hidden from pills — labels where the reader is
+     choosing read as clutter. Data retained; the motive survives as a
+     hover title, and the answer's meta line still carries provenance. */
+  const qPill = ([q, i]) => `<button class="chip-q" data-chat="q${i}" title="Question written from the ${esc(q.lens)} viewpoint — ${esc(motive(q.lens))}">${esc(q.q)}</button>`;
+  const dPill = (qi, d, j) => `<button class="chip-q" data-chat="d${qi}-${j}"><span>${esc(d.q)}</span><span class="chip-m">${d.secs}s</span></button>`;
+
+  let flow = `<div class="msg msg-t"><p>Ask one. Each has been researched against the record — every figure traced to a source, or marked as having none.</p></div>`;
+  seq.forEach(k => {
+    if (k[0] === 'q') {
+      const i = +k.slice(1), q = s.questions[i];
+      if (!q) return;
+      flow += `<div class="msg msg-you">${esc(q.q)}</div>
+        <div class="msg msg-t">${answer(s, q, i)}</div>`;
+    } else {
+      const [qi, j] = k.slice(1).split('-').map(Number);
+      const q = s.questions[qi], d = q && q.deeper[j];
+      if (!d) return;
+      flow += `<div class="msg msg-you">${esc(d.q)}</div>
+        <div class="msg msg-t"><div class="deep-t"><p>${d.a}${cites(s, d.c)}</p></div>
+          <div class="deep-m">${d.secs}s read</div></div>`;
+    }
+  });
+
+  const lastK = seq[seq.length - 1];
+  const unaskedQ = qOrder.filter(([q, i]) => !askedQ.has(i));
+  let pills = '';
+  if (!lastK) {
+    pills = `<div class="chip-h">Pick your first question</div>
+      <div class="chat-chips">${unaskedQ.map(qPill).join('')}</div>`;
+  } else {
+    const qi = +(lastK[0] === 'q' ? lastK.slice(1) : lastK.slice(1).split('-')[0]);
+    const q = s.questions[qi];
+    const deeper = q.deeper.map((d, j) => [d, j]).filter(([d, j]) => !askedD.has('d' + qi + '-' + j));
+    pills = (deeper.length ? `<div class="chip-h">Ask a follow-up</div>
+        <div class="chat-chips">${deeper.map(([d, j]) => dPill(qi, d, j)).join('')}</div>` : '')
+      + (unaskedQ.length ? `<div class="chip-h">${deeper.length ? 'Or change direction' : 'This thread is done — change direction'}</div>
+        <div class="chat-chips">${unaskedQ.slice(0, 3).map(qPill).join('')}</div>` : '')
+      + (!deeper.length && !unaskedQ.length ? `<div class="chat-done">You've asked everything here. The transcript above is your record — or move on to a connected story below.</div>` : '');
+  }
+  return flow + pills;
 }
 /* Comments are hidden for now (product decision, Aug 14) — the comments()
    renderer, seeded threads, and composer handler are kept intact so the
@@ -11277,6 +11323,17 @@ function keepPlace(art, fn) {
 
 feedEl.addEventListener('click', e => {
   if (e.target.closest('a')) return;
+
+  /* citation markers toggle their source popup (hover fails on touch);
+     any other click closes whatever popup is open */
+  const citeBtn = e.target.closest('[data-cite]');
+  if (citeBtn) {
+    const cw = citeBtn.closest('.cw');
+    feedEl.querySelectorAll('.cw.open').forEach(x => { if (x !== cw) x.classList.remove('open'); });
+    cw.classList.toggle('open');
+    return;
+  }
+  feedEl.querySelectorAll('.cw.open').forEach(x => x.classList.remove('open'));
 
   if (e.target.closest('[data-clear]')) { intake = null; render(); return; }
   if (e.target.closest('summary')) return;
@@ -11309,24 +11366,16 @@ feedEl.addEventListener('click', e => {
     keepPlace(art, render);
     return;
   }
-  const tile = e.target.closest('.qtile');
-  if (tile) {
-    const i = +tile.dataset.q;
-    const opening = openQ[id] !== i;
-    openQ[id] = opening ? i : null;
-    keepPlace(art, render);
-    if (opening) {
-      const ans = feedEl.querySelector(`.post[data-id="${CSS.escape(id)}"] .ans`);
-      if (ans) ans.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
-    }
-    return;
-  }
-  const deep = e.target.closest('[data-deep]');
-  if (deep) {
-    /* static site: the thread content is pre-researched, so it expands
+  const chat = e.target.closest('[data-chat]');
+  if (chat) {
+    /* static site: content is pre-researched, so the answer arrives
        instantly — no pretend research pass */
-    deepDone.add(deep.dataset.deep);
+    const seq = chatSeq[id] = chatSeq[id] || [];
+    if (seq[seq.length - 1] !== chat.dataset.chat) seq.push(chat.dataset.chat);
     keepPlace(art, render);
+    const asks = feedEl.querySelectorAll(`.post[data-id="${CSS.escape(id)}"] .msg-you`);
+    const lastAsk = asks[asks.length - 1];
+    if (lastAsk) lastAsk.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   }
 });
 
