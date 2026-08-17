@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A judge said the president does not own the White House. The Supreme Court decides next.</title>
+</head>
+<body>
+
+<style>
+:root {
+  --paper:      #EEF0F3;
+  --surface:    #FFFFFF;
+  --surface-2:  #F6F8FA;
+  --surface-3:  #E9ECF1;
+  --ink:        #101418;
+  --ink-2:      #4E5866;
+  --ink-3:      #7C8695;
+  --rule:       #DBE0E7;
+  --rule-soft:  #E6EAEF;
+  --cold:       #0B6E7F;
+  --cold-ink:   #08525F;
+  --cold-soft:  #E0EFF2;
+  --hot:        #B4341C;
+  --hot-soft:   #F9E8E3;
+  --shadow-sm:  0 1px 2px rgba(16,20,24,.06);
+  --shadow:     0 2px 4px rgba(16,20,24,.05), 0 10px 28px -14px rgba(16,20,24,.22);
+  --pop:        0 4px 12px rgba(16,20,24,.14), 0 12px 32px -12px rgba(16,20,24,.3);
+
+  --font-display: "Superclarendon", "Rockwell", "Roboto Slab", Georgia, serif;
+  --font-body: "Avenir Next", "Avenir", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, "Cascadia Mono", Consolas, monospace;
+  --maxread: 64ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0C1015; --surface: #141A21; --surface-2: #1A212A; --surface-3: #202934;
+    --ink: #E8EDF2; --ink-2: #9AA6B4; --ink-3: #6B7684;
+    --rule: #273039; --rule-soft: #1E252D;
+    --cold: #4FC3D6; --cold-ink: #8FDDEA; --cold-soft: #0E2C34;
+    --hot: #E8785C; --hot-soft: #331C17;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.35);
+    --shadow: 0 2px 4px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.7);
+    --pop: 0 4px 12px rgba(0,0,0,.5), 0 12px 32px -12px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0C1015; --surface: #141A21; --surface-2: #1A212A; --surface-3: #202934;
+  --ink: #E8EDF2; --ink-2: #9AA6B4; --ink-3: #6B7684;
+  --rule: #273039; --rule-soft: #1E252D;
+  --cold: #4FC3D6; --cold-ink: #8FDDEA; --cold-soft: #0E2C34;
+  --hot: #E8785C; --hot-soft: #331C17;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.35);
+  --shadow: 0 2px 4px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.7);
+  --pop: 0 4px 12px rgba(0,0,0,.5), 0 12px 32px -12px rgba(0,0,0,.8);
+}
+
+* { box-sizing: border-box; }
+html { overflow-x: clip; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip; max-width: 100%;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+a { color: var(--cold-ink); }
+:focus-visible { outline: 2px solid var(--cold); outline-offset: 2px; border-radius: 3px; }
+::selection { background: var(--cold-soft); color: var(--cold-ink); }
+
+/* ============ sticky chrome ============ */
+.bar {
+  position: sticky; top: 0; z-index: 40;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
+}
+.bar-in { max-width: 780px; margin: 0 auto; padding: 12px 16px 0; }
+.bar-top { display: flex; align-items: center; gap: 12px; }
+.mark { font-family: var(--font-display); font-size: 21px; font-weight: 700; letter-spacing: -.02em; }
+.mark-link { color: var(--ink); text-decoration: none; }
+.mark-gap { color: var(--hot); }
+.tagline {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .03em;
+  color: var(--ink-3); text-transform: uppercase;
+}
+.topics { display: flex; gap: 6px; padding: 11px 0 10px; overflow-x: auto; scrollbar-width: none; }
+.topics::-webkit-scrollbar { display: none; }
+.topic {
+  flex: none; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--ink-2); padding: 6px 11px;
+  border: 1px solid var(--rule); border-radius: 999px; background: var(--surface);
+  transition: border-color .12s, color .12s, background .12s; white-space: nowrap;
+}
+.topic:hover { border-color: var(--ink-3); color: var(--ink); }
+.topic[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.topic-n { opacity: .5; margin-left: 5px; font-variant-numeric: tabular-nums; }
+
+/* ============ feed ============ */
+.feed { max-width: 780px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.feed > * { min-width: 0; }
+.count {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-3); padding: 0 2px 2px;
+}
+
+/* ---- paste-a-URL intake ---- */
+.intake {
+  background: var(--surface); border: 1px dashed color-mix(in srgb, var(--cold) 45%, var(--rule));
+  border-radius: 7px; padding: 14px;
+}
+.intake-h { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 11px; }
+.intake-t { font-family: var(--font-display); font-size: 15px; }
+.intake-s { font-family: var(--font-mono); font-size: 10px; letter-spacing: .04em; color: var(--ink-3); text-transform: uppercase; }
+.intake-form input { font-size: 14px; }
+.pipe { display: flex; flex-direction: column; gap: 7px; }
+.pstep {
+  display: flex; align-items: center; gap: 9px; font-family: var(--font-mono); font-size: 11.5px;
+  color: var(--ink-3); letter-spacing: .02em; transition: color .2s;
+}
+.pstep.done { color: var(--ink-2); } .pstep.now { color: var(--cold); }
+.pdot { width: 13px; display: inline-grid; place-items: center; font-size: 10px; }
+.pipe-out .sub { margin-bottom: 5px; }
+.pipe-url {
+  font-family: var(--font-mono); font-size: 11.5px; color: var(--cold-ink);
+  background: var(--cold-soft); padding: 8px 10px; border-radius: 4px; word-break: break-all;
+}
+.pipe-out .ask-p { font-size: 14px; }
+
+/* ---- posts + voting ---- */
+.post {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 7px;
+  box-shadow: var(--shadow-sm); transition: box-shadow .14s, border-color .14s;
+  min-width: 0;
+}
+.post:hover { border-color: color-mix(in srgb, var(--ink-3) 45%, var(--rule)); }
+.post[data-open="true"] { box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--cold) 35%, var(--rule)); }
+
+.head {
+  display: grid; grid-template-columns: 72px 1fr 16px; gap: 14px; align-items: start;
+  width: 100%; text-align: left; padding: 14px;
+}
+.head { color: inherit; text-decoration: none; }
+.thumb {
+  width: 72px; height: 72px; border-radius: 5px; background: var(--cold-soft);
+  display: grid; place-items: center; color: var(--cold); flex: none;
+  border: 1px solid color-mix(in srgb, var(--cold) 18%, transparent);
+}
+.thumb svg { width: 44px; height: 44px; display: block; }
+.hmeta {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px;
+}
+.cat { color: var(--cold); font-weight: 600; }
+.htitle {
+  font-family: var(--font-display); font-size: 19px; line-height: 1.24;
+  letter-spacing: -.012em; margin: 0 0 6px; text-wrap: balance;
+}
+.hdek {
+  font-size: 14.5px; line-height: 1.45; color: var(--ink-2); margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.post[data-open="true"] .hdek { -webkit-line-clamp: unset; }
+.hfoot {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 9px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.qpill {
+  color: var(--hot); background: var(--hot-soft);
+  border: 1px solid color-mix(in srgb, var(--hot) 24%, transparent);
+  padding: 2px 6px; border-radius: 3px; font-weight: 600;
+}
+.caret { font-family: var(--font-mono); font-size: 13px; color: var(--ink-3); transition: transform .18s ease; padding-top: 2px; }
+.post[data-open="true"] .caret { transform: rotate(90deg); }
+
+/* ============ expanded body ============ */
+.body { padding: 0 20px 18px; }
+.divider { height: 1px; background: var(--rule-soft); margin: 2px 0 16px; }
+
+.brief { display: flex; flex-direction: column; gap: 11px; max-width: var(--maxread); }
+.brief p { margin: 0; font-size: 16px; line-height: 1.55; }
+.tag-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.brief-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--cold); background: var(--cold-soft); padding: 4px 8px; border-radius: 3px;
+  font-variant-numeric: tabular-nums;
+}
+/* "briefed from N sources" — the answer to "where does this come from?",
+   visible before a reader has scrolled anywhere */
+.src-jump {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--ink-3); background: none; border: none; cursor: pointer; padding: 4px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--cold) 35%, transparent);
+}
+.src-jump:hover { color: var(--cold); border-bottom-color: var(--cold); }
+/* Key figures, demoted from hero tiles to a quiet footnote line. Two testers
+   independently found the big tiles context-free; numbers now read as an
+   aside under the brief, not a headline act. */
+.nums {
+  display: flex; flex-wrap: wrap; column-gap: 18px; row-gap: 4px; margin-top: 12px;
+  font-family: var(--font-mono); font-size: 10.5px; line-height: 1.5; color: var(--ink-3);
+}
+.nums-h { letter-spacing: .09em; text-transform: uppercase; color: var(--cold); }
+.num-v { color: var(--ink-2); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* ---- sources modal (opened from "briefed from N sources") ---- */
+.modal-wrap {
+  position: fixed; inset: 0; z-index: 80; display: grid; place-items: center;
+  background: color-mix(in srgb, #000 44%, transparent); padding: 18px;
+}
+.modal {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 10px;
+  box-shadow: var(--pop); width: min(560px, 100%); max-height: 80vh;
+  display: flex; flex-direction: column;
+}
+.modal-head {
+  display: flex; align-items: center; gap: 8px; padding: 11px 14px;
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-2);
+}
+.modal-head .dd-n { margin-left: 0; }
+.modal-x {
+  margin-left: auto; font-size: 13px; color: var(--ink-3); padding: 2px 6px; border-radius: 4px;
+}
+.modal-x:hover { color: var(--ink); background: var(--surface-3); }
+.modal-body { padding: 12px 14px 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+.modal-sub {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-3); margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--rule-soft);
+}
+details.dd { border: 1px solid var(--rule); border-radius: 5px; background: var(--surface-2); }
+details.dd > summary {
+  list-style: none; cursor: pointer; padding: 8px 11px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--ink-2); display: flex; align-items: center; gap: 8px;
+}
+details.dd > summary::-webkit-details-marker { display: none; }
+details.dd > summary::before { content: "+"; color: var(--cold); font-size: 12px; width: 9px; }
+details.dd[open] > summary::before { content: "−"; }
+details.dd > summary:hover { color: var(--ink); }
+.dd-n { margin-left: auto; opacity: .6; font-variant-numeric: tabular-nums; }
+.dd-body { padding: 2px 11px 10px; display: flex; flex-direction: column; gap: 7px; }
+.ref { display: grid; grid-template-columns: 18px 1fr; gap: 8px; font-size: 13.5px; line-height: 1.4; }
+.ref-n {
+  font-family: var(--font-mono); font-size: 10px; color: var(--cold);
+  font-variant-numeric: tabular-nums; padding-top: 2px;
+}
+.ref a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--cold) 35%, transparent); }
+.ref a:hover { border-bottom-color: var(--cold); }
+.ref-o { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .05em; }
+.caveat { font-family: var(--font-mono); font-size: 9.5px; line-height: 1.6; color: var(--ink-3); padding: 6px 11px 2px; }
+.ref-k { font-family: var(--font-mono); font-size: 9px; letter-spacing: .05em; text-transform: uppercase; color: var(--cold-ink); background: var(--cold-soft); border-radius: 4px; padding: 1px 5px; margin-left: 6px; white-space: nowrap; cursor: help; }
+
+/* ---- inline citation markers ---- */
+.cw { position: relative; display: inline-block; }
+.cite {
+  font-family: var(--font-mono); font-size: 9.5px; text-decoration: none;
+  color: var(--cold); background: var(--cold-soft); border-radius: 2px;
+  padding: 1px 3px; margin-left: 2px; vertical-align: 1.5px; line-height: 1.4;
+  border: 1px solid transparent; cursor: pointer;
+}
+.cite:hover { border-color: color-mix(in srgb, var(--cold) 45%, transparent); }
+.cw.open .cite { border-color: var(--cold); }
+.pop {
+  position: absolute; bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%);
+  width: 244px; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--rule); border-radius: 5px; box-shadow: var(--pop);
+  padding: 9px 11px; font-size: 12.5px; line-height: 1.42; font-family: var(--font-body);
+  opacity: 0; visibility: hidden; transition: opacity .12s; z-index: 60; pointer-events: none;
+  text-align: left; text-transform: none; letter-spacing: 0;
+}
+/* v19: tap-to-open — hover fails on touch, and the marker itself no longer
+   navigates; the popup carries the real link instead */
+.cw:hover .pop, .cw:focus-within .pop, .cw.open .pop { opacity: 1; visibility: visible; pointer-events: auto; }
+.pop-o {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--cold); display: block; margin-bottom: 3px;
+}
+.pop-u { font-family: var(--font-mono); font-size: 10px; color: var(--cold-ink); display: block; margin-top: 5px; word-break: break-all; text-decoration: underline; text-underline-offset: 2px; }
+
+/* ============ the gap + question grid ============ */
+.gap { display: flex; align-items: center; gap: 10px; margin: 24px 0 12px; }
+.gap-label { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: var(--hot); font-weight: 600; }
+.gap-note { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); }
+.gap-rule { flex: 1; height: 1px; background: var(--rule); }
+
+/* v17: the gap is a conversation. Your chosen question renders as a sent
+   bubble, the cold answer as a received one, and the next questions arrive
+   as quick-reply pills — deeper first, then change-direction. The
+   transcript accumulates, so the reader's line of inquiry stays visible. */
+.msg { max-width: 92%; border-radius: 14px; margin-top: 10px; }
+/* v18 type theme: three voices, three fonts. The slab display is the
+   record's frame (headlines, structure); the mono is measurement (meta,
+   labels); the conversation — the reader asking, the record answering —
+   reads in the body sans at messaging scale. Bubbles and pills therefore
+   carry --font-body, never the display face. */
+.msg-you {
+  margin-left: auto; width: fit-content; background: var(--cold); color: var(--paper);
+  border-bottom-right-radius: 4px; padding: 9px 13px;
+  font-family: var(--font-body); font-size: 14px; font-weight: 600; line-height: 1.45;
+  scroll-margin-top: 104px;
+}
+.msg-t {
+  margin-right: auto; background: var(--surface-2); border: 1px solid var(--rule);
+  border-bottom-left-radius: 4px; padding: 13px 15px;
+}
+.msg-t > p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); max-width: var(--maxread); }
+.msg-t .ans { margin-top: 0; background: none; border: none; padding: 0; border-radius: 0; }
+.msg-t .deep-m { margin-top: 9px; }
+.chip-h { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin: 16px 0 0; }
+.chat-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.chip-q {
+  text-align: left; border: 1px solid color-mix(in srgb, var(--cold) 55%, var(--rule));
+  color: var(--cold-ink); border-radius: 16px; padding: 8px 13px; background: var(--surface);
+  font-family: var(--font-body); font-size: 13.5px; font-weight: 500; line-height: 1.4; max-width: 100%;
+  display: flex; align-items: baseline; gap: 10px; transition: background .12s, border-color .12s;
+}
+.chip-q:hover { background: var(--cold-soft); border-color: var(--cold); }
+.chip-q .chip-m { flex: none; }
+.chat-done { font-size: 12.5px; color: var(--ink-3); margin-top: 14px; }
+.lens {
+  font-family: var(--font-body); font-size: 11.5px; letter-spacing: .01em;
+  color: var(--ink-2); border: 1px solid var(--rule); border-radius: 3px; padding: 2px 7px;
+  white-space: nowrap; background: var(--surface); cursor: help;
+}
+
+/* record evolution — the two-track record made visible: claims enter as
+   developing and graduate to settled, or get revised in the open */
+.rec { margin: 18px 0 4px; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface-2); }
+.rec summary { display: flex; align-items: baseline; gap: 8px; padding: 10px 12px; cursor: pointer; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--cold-ink); }
+.rec summary::-webkit-details-marker { display: none; }
+.rec-intro { font-size: 12.5px; line-height: 1.55; color: var(--ink-2); padding: 0 12px 8px; margin: 0; }
+.rec-row { display: grid; grid-template-columns: 74px 1fr; gap: 10px; padding: 10px 12px; border-top: 1px solid var(--rule-soft); }
+.rec-when { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); padding-top: 2px; }
+.rec-claim { font-size: 13.5px; line-height: 1.55; color: var(--ink); }
+.rec-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; align-items: center; }
+.rec-basis { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 6px; }
+.rec-st { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .05em; text-transform: uppercase; border-radius: 4px; padding: 1px 6px; }
+.rec-st.held { color: var(--cold-ink); background: var(--cold-soft); }
+.rec-st.revised { color: var(--hot); background: var(--hot-soft); }
+.rec-note { font-size: 12.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.5; }
+@media (max-width: 640px) { .rec-row { grid-template-columns: 1fr; gap: 3px; } }
+
+/* topic navigation, spatial: the past above (How we got here, a timeline
+   into today), depth in the middle (the gap), connected stories at the exit.
+   v12: the arc is now the explicit newcomer on-ramp — a collapsed panel right
+   under the read, labelled as the catch-up, skippable by people already
+   following the story. */
+details.onramp { margin: 14px 0 18px; border-color: color-mix(in srgb, var(--cold) 22%, var(--rule)); }
+details.onramp > summary { padding: 10px 14px; }
+.onramp-t { text-transform: none; letter-spacing: 0; font-family: inherit; font-size: 12.5px; color: var(--ink-2); }
+.onramp-t b { color: var(--ink); font-weight: 600; }
+.arc { margin: 0; border: none; border-radius: 0; background: transparent; padding: 2px 11px 8px; }
+.arc-h { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.arc-q { font-family: var(--font-display); font-size: 15px; color: var(--ink); }
+/* v13: vertical timeline. The horizontal card strip hid later nodes behind a
+   scroll and cramped each claim into a 200px card; a reader-tester called it
+   hard to navigate and the one-liners too thin. Vertical gives every node the
+   full reading measure and shows the whole arc at a glance. */
+.arc-track { display: flex; flex-direction: column; margin: 2px 0 0 5px; max-width: var(--maxread); }
+.arc-node { position: relative; border-left: 2px solid var(--rule); padding: 5px 8px 13px 16px; display: grid; grid-template-columns: 72px 1fr; gap: 12px; }
+.arc-node::before { content: ''; position: absolute; left: -5px; top: 10px; width: 6px; height: 6px; border-radius: 50%; background: var(--surface-2); border: 2px solid var(--ink-3); }
+.arc-node:last-child { padding-bottom: 5px; }
+.arc-when { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: var(--cold-ink); padding-top: 2px; }
+.arc-claim { display: block; font-size: 12.5px; line-height: 1.55; color: var(--ink-2); }
+.arc-today { border-left-color: var(--cold); background: var(--cold-soft); border-radius: 0 6px 6px 0; }
+.arc-today::before { border-color: var(--cold); background: var(--cold); }
+.arc-today .arc-claim { color: var(--cold-ink); font-weight: 600; }
+@media (max-width: 480px) { .arc-node { grid-template-columns: 1fr; gap: 2px; } }
+.arc-fight { margin-top: 8px; font-size: 12.5px; line-height: 1.55; color: var(--ink-2); }
+.arc-tag2 { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--hot); background: var(--hot-soft); border-radius: 4px; padding: 1px 6px; margin-right: 7px; white-space: nowrap; }
+
+.conn { margin: 20px 0 2px; }
+.conn-h { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+.conn-card { display: block; width: 100%; text-align: left; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface-2); padding: 10px 12px; margin-bottom: 8px; transition: border-color .12s; }
+.conn-card:hover { border-color: var(--cold); }
+.conn-why { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: .04em; text-transform: uppercase; color: var(--cold-ink); margin-bottom: 3px; }
+.conn-head { display: block; font-family: var(--font-display); font-size: 14.5px; line-height: 1.35; color: var(--ink); }
+.conn-card:hover .conn-head { color: var(--cold); text-decoration: underline; }
+.conn-meta { display: block; font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); margin-top: 3px; }
+
+/* avoidance chip — always visible, names itself a judgement */
+.hw { position: relative; display: inline-flex; margin-left: auto; }
+.avoid {
+  display: inline-flex; align-items: center; gap: 5px; cursor: help;
+  border: 1px solid var(--rule); border-radius: 3px; padding: 2px 6px 2px 5px;
+  background: var(--surface); white-space: nowrap;
+}
+.avoid[data-n="3"] { border-color: color-mix(in srgb, var(--hot) 34%, transparent); background: var(--hot-soft); }
+.avoid-t {
+  font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--ink-2);
+}
+.avoid[data-n="3"] .avoid-t { color: var(--hot); }
+/* "Sides split" — the cold counterpart to the avoidance chip. Questions where
+   the draw is the genuine disagreement in the record, not its absence from
+   coverage (reader-tester ask: surface fact-checked splits, not just gaps). */
+.avoid.split { border-color: color-mix(in srgb, var(--cold) 34%, transparent); background: var(--cold-soft); }
+.avoid.split .avoid-t { color: var(--cold-ink); }
+.heat { display: flex; gap: 2px; align-items: flex-end; height: 11px; }
+.heat i { display: block; width: 3px; background: var(--rule); border-radius: 1px; }
+.heat i:nth-child(1) { height: 5px; }
+.heat i:nth-child(2) { height: 8.5px; }
+.heat i:nth-child(3) { height: 12px; }
+.heat i.on { background: var(--hot); }
+.hw .pop { width: 218px; }
+.pop-h {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--hot); display: block; margin-bottom: 4px;
+}
+.pop-scale { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); margin-top: 6px; display: block; }
+
+/* ============ the cold answer ============ */
+.ans {
+  scroll-margin-top: 104px; /* clear the sticky header when scrolled into view */
+  margin-top: 11px; background: var(--surface-2); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 15px;
+}
+.ans-meta {
+  display: flex; flex-wrap: wrap; gap: 12px; font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+  padding-bottom: 11px; border-bottom: 1px solid var(--rule-soft); font-variant-numeric: tabular-nums;
+}
+.ans-meta b { color: var(--cold); font-weight: 600; }
+.conf-hi { color: var(--cold); } .conf-md { color: var(--ink-2); } .conf-lo { color: var(--hot); }
+.ans-q { font-family: var(--font-display); font-size: 17px; line-height: 1.3; letter-spacing: -.008em; }
+.prov {
+  font-size: 12.5px; line-height: 1.55; color: var(--ink-2); background: var(--cold-soft);
+  border: 1px solid color-mix(in srgb, var(--cold) 20%, transparent);
+  border-radius: 4px; padding: 9px 11px; max-width: var(--maxread);
+}
+.prov b { color: var(--cold-ink); font-weight: 600; }
+.ans-lead { font-size: 14.5px; line-height: 1.5; max-width: var(--maxread); border-left: 2px solid var(--cold); padding-left: 13px; font-weight: 500; }
+.sub { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+.facts { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; max-width: var(--maxread); }
+.facts li { display: grid; grid-template-columns: 13px 1fr; gap: 8px; font-size: 14px; line-height: 1.5; }
+.facts li::before { content: "—"; color: var(--cold); font-family: var(--font-mono); font-size: 11px; line-height: 1.8; }
+.txt { font-size: 14px; line-height: 1.5; max-width: var(--maxread); color: var(--ink-2); }
+.txt b, .facts b { color: var(--ink); font-weight: 600; }
+.blk-hot { border-left: 2px solid var(--hot); padding-left: 13px; }
+.blk-cold { border-left: 2px solid var(--cold); padding-left: 13px; }
+.quote {
+  border-left: 2px solid var(--rule); padding-left: 13px; max-width: var(--maxread);
+  font-family: var(--font-display); font-size: 15px; line-height: 1.45; color: var(--ink);
+}
+.quote-w { font-family: var(--font-mono); font-size: 10px; letter-spacing: .05em; color: var(--ink-3); text-transform: uppercase; margin-top: 6px; display: block; }
+
+/* deeper — several threads, each a 30-60s read */
+.conf-why { color: var(--ink-3); text-transform: none; letter-spacing: 0; margin-left: 5px; }
+.react { border-top: 1px dashed var(--rule); padding-top: 13px; display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+.react-q { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); }
+.react-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.rb {
+  font-family: var(--font-body); font-size: 12.5px; color: var(--ink-2);
+  border: 1px solid var(--rule); background: var(--surface);
+  padding: 5px 10px; border-radius: 999px; transition: border-color .12s, color .12s, background .12s;
+}
+.rb:hover { border-color: var(--ink-3); color: var(--ink); }
+.rb.on { background: var(--cold-soft); border-color: var(--cold); color: var(--cold-ink); font-weight: 600; }
+.rb-flag.on { background: var(--hot-soft); border-color: var(--hot); color: var(--hot); }
+.rb:disabled { opacity: .55; cursor: default; }
+.react-ack {
+  flex: 1 1 100%; font-size: 12.5px; line-height: 1.5; color: var(--ink-2);
+  border-radius: 4px; padding: 8px 10px; border: 1px solid transparent;
+}
+.react-ack.pending {
+  display: flex; align-items: center; gap: 8px; background: var(--hot-soft);
+  border-color: color-mix(in srgb, var(--hot) 22%, transparent);
+}
+.react-ack.resolved {
+  background: var(--cold-soft); border-color: color-mix(in srgb, var(--cold) 22%, transparent);
+}
+.react-ack.resolved b { color: var(--cold-ink); }
+.hist { flex: 1 1 100%; margin-top: 2px; }
+.hist summary {
+  cursor: pointer; font-family: var(--font-mono); font-size: 10px; letter-spacing: .04em;
+  color: var(--ink-3); list-style: none;
+}
+.hist summary::-webkit-details-marker { display: none; }
+.hist summary::before { content: "› "; }
+.hist[open] summary::before { content: "⌄ "; }
+.hist-row { font-size: 11.5px; color: var(--ink-3); padding: 4px 0 4px 13px; border-left: 1px solid var(--rule-soft); margin-left: 3px; }
+.ver { font-variant-numeric: tabular-nums; }
+.chip-m { font-family: var(--font-mono); font-size: 10px; opacity: .65; flex: none; font-variant-numeric: tabular-nums; }
+.working { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); letter-spacing: .04em; display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cold); animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: .25; } 50% { opacity: 1; } }
+.deep-t { font-size: 14px; line-height: 1.55; max-width: var(--maxread); color: var(--ink-2); }
+.deep-t p { margin: 0 0 11px; }
+.deep-t p:last-child { margin-bottom: 0; }
+.deep-t b { color: var(--ink); font-weight: 600; }
+.deep-m { font-family: var(--font-mono); font-size: 9.5px; color: var(--ink-3); margin-top: 9px; letter-spacing: .05em; text-transform: uppercase; }
+
+/* the long read */
+/* v13: the read is one piece. The brief opens the article, the standfirst
+   pivots it into analysis, the sections carry it — no "keep reading" seam. */
+.full { margin-top: 16px; display: flex; flex-direction: column; gap: 18px; }
+.long-standfirst { font-size: 16px; line-height: 1.55; color: var(--ink-2); max-width: var(--maxread); margin: 0; font-style: italic; }
+.long-sec { max-width: var(--maxread); }
+.long-h { font-family: var(--font-mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--cold); margin: 0 0 9px; font-weight: 600; }
+.long-sec p { margin: 0 0 11px; font-size: 15.5px; line-height: 1.62; }
+.long-sec p:last-child { margin-bottom: 0; }
+.long-sec b { font-weight: 600; }
+
+/* comments */
+.talk { border-top: 1px solid var(--rule); padding-top: 14px; }
+.lock { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .04em; color: var(--ink-3); background: var(--surface-3); padding: 7px 10px; border-radius: 4px; margin-bottom: 12px; line-height: 1.6; }
+.lock b { color: var(--ink-2); }
+.cmt { display: flex; flex-direction: column; gap: 13px; margin-bottom: 12px; }
+.cmt-row { display: grid; grid-template-columns: 26px 1fr; gap: 9px; }
+.cmt-l { display: flex; justify-content: center; padding-top: 1px; }
+.av { width: 17px; height: 17px; border-radius: 50%; background: var(--surface-3); color: var(--ink-2); font-family: var(--font-mono); font-size: 8px; font-weight: 600; display: inline-grid; place-items: center; vertical-align: -4px; margin-right: 6px; }
+.cmt-h { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .04em; color: var(--ink-3); margin-bottom: 4px; display: flex; align-items: center; }
+.cmt-h b { color: var(--ink-2); font-weight: 600; }
+.cmt-t { font-size: 14px; line-height: 1.5; }
+.empty { font-size: 13px; color: var(--ink-3); margin-bottom: 12px; }
+.composer { display: grid; grid-template-columns: 1fr auto; gap: 7px; }
+.composer input { font: inherit; font-size: 14px; background: var(--surface); color: var(--ink); border: 1px solid var(--rule); border-radius: 4px; padding: 9px 11px; min-width: 0; }
+.composer input::placeholder { color: var(--ink-3); }
+.composer button { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--paper); background: var(--ink); padding: 0 15px; border-radius: 4px; }
+.composer button:hover { background: var(--cold-ink); }
+
+.ask { margin-top: 14px; padding: 9px 11px; border: 1px dashed var(--rule); border-radius: 6px; background: var(--surface-2); }
+.ask-h { font-family: var(--font-display); font-size: 15.5px; margin-bottom: 5px; }
+.ask-row { grid-template-columns: auto 1fr auto; align-items: center; }
+.ask-row .ask-h { margin: 0; white-space: nowrap; padding-right: 5px; font-size: 14.5px; }
+.ask-p { font-size: 13.5px; color: var(--ink-2); margin: 0 0 11px; max-width: 60ch; line-height: 1.5; }
+
+.foot { max-width: 780px; margin: 8px auto 0; padding: 16px; border-top: 1px solid var(--rule); font-family: var(--font-mono); font-size: 10px; line-height: 1.8; color: var(--ink-3); letter-spacing: .02em; }
+.foot-min { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.foot-mark { font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -.02em; color: var(--ink-2); }
+.foot-min a { color: var(--ink-3); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.foot-min a:hover { color: var(--cold); border-bottom-color: var(--cold); }
+
+/* the charter, on its own page (hash-routed) */
+.charter { max-width: 680px; margin: 0 auto; padding: 26px 16px 70px; }
+.charter-h1 { font-family: var(--font-display); font-size: 26px; letter-spacing: -.015em; margin: 14px 0 6px; }
+.charter-v { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--cold); vertical-align: 6px; margin-left: 8px; }
+.charter-h2 { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--cold); margin: 26px 0 8px; font-weight: 600; }
+.charter p { margin: 0 0 10px; font-size: 15px; line-height: 1.62; color: var(--ink-2); max-width: var(--maxread); }
+.charter p b { color: var(--ink); font-weight: 600; }
+.charter-back { display: inline-block; font-family: var(--font-mono); font-size: 11px; letter-spacing: .05em; color: var(--cold-ink); text-decoration: none; margin-top: 6px; }
+.charter-back:hover { color: var(--cold); text-decoration: underline; }
+
+@media (max-width: 640px) {
+  .head { grid-template-columns: 54px 1fr 14px; gap: 11px; padding: 12px; }
+  .body { padding: 0 16px 16px; }
+  .thumb { width: 54px; height: 54px; }
+  .thumb svg { width: 32px; height: 32px; }
+  .htitle { font-size: 17px; }
+  .ask-row { grid-template-columns: 1fr auto; }
+  .ask-row .ask-h { grid-column: 1 / -1; margin-bottom: 2px; }
+  .tagline { display: none; }
+  .pop { width: 200px; }
+  .nums { column-gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+
+
+
+<header class="bar"><div class="bar-in"><div class="bar-top"><a class="mark mark-link" href="../index.html">TELL<span class="mark-gap">UM</span></a></div></div></header>
+
+<main class="feed" id="feed"></main>
+<div id="modalRoot"></div>
+
+
+
+<script>
+const PAGE_STORY_ID = "p7"; // @PAGE_STORY_ID
+const POLITICS = [
+{
+  id: 'p7', cat: 'politics',
+  "catLabel": "Politics",
+  "age": "1d",
+  "published_at": "2026-08-15T07:00:00Z",
+  "art": "house",
+  "headline": "A judge said the president does not own the White House. The Supreme Court decides next.",
+  "dek": "The East Wing came down last year without telling Congress. A <b>$400 million</b> ballroom funded by donors including Lockheed Martin, Amazon and Microsoft is going up in its place. An order stopping the work takes effect on <b>21 August</b>.",
+  "brief": [
+    "The administration went to the Supreme Court on <b>14 August</b> and asked it to let the building continue. A week earlier, on <b>7 August</b>, the D.C. Circuit had upheld an order stopping above-ground work, finding the White House very likely lacked the authority to demolish the East Wing in the first place. That order takes effect on <b>21 August</b>. Chief Justice John Roberts gave the other side until Tuesday to reply.",
+    "The case began with a demolition. The East Wing was torn down last year without notifying Congress, and the National Trust for Historic Preservation sued, asking that the project pause for independent review and congressional approval. In <b>March</b>, Judge Richard J. Leon agreed. \"No statute comes close to giving the President the authority he claims to have,\" he wrote, and then, with the exclamation mark his own: \"The President of the United States is the steward of the White House for future generations of First Families. He is not, however, the owner!\"",
+    "What is going up is large. A <b>90,000</b> square foot ballroom on a <b>50,000</b> square foot concrete base, paid for by private donors whose money passes through a nonprofit to the National Park Service and then into a presidential account. The government now argues the site is a military complex. Solicitor General D. John Sauer told the court the injunction halts \"the ongoing construction of the integrated military complex, including a totally secure ballroom space,\" and the president has described a drone port on the roof."
+  ],
+  "stats": [
+    [
+      "$400M",
+      "Cost of the ballroom, funded by private donors"
+    ],
+    [
+      "90,000",
+      "Square feet of the planned ballroom"
+    ],
+    [
+      "21 Aug",
+      "When the order stopping work takes effect"
+    ]
+  ],
+  "refs": [
+    {
+      "t": "Trump asks Supreme Court to let White House ballroom construction continue",
+      "o": "CNBC",
+      "u": "https://www.cnbc.com/2026/08/14/trump-ballroom-supreme-court-white-house.html",
+      "k": "analysis"
+    },
+    {
+      "t": "Trump asks Supreme Court to intervene in White House ballroom legal fight",
+      "o": "CBS News",
+      "u": "https://www.cbsnews.com/news/trump-supreme-court-white-house-ballroom/",
+      "k": "analysis"
+    },
+    {
+      "t": "Trump’s White House ballroom construction must halt unless Congress OKs it, judge orders",
+      "o": "PBS NewsHour",
+      "u": "https://www.pbs.org/newshour/politics/trump-administration-must-halt-white-house-ballroom-construction-unless-congress-oks-it-judge-orders",
+      "k": "analysis"
+    },
+    {
+      "t": "Trump asks Supreme Court to let White House ballroom construction continue during appeal",
+      "o": "Boston.com (AP)",
+      "u": "https://www.boston.com/news/national-news/2026/08/14/trump-asks-supreme-court-to-let-white-house-ballroom-construction-continue-during-appeal/",
+      "k": "analysis"
+    },
+    {
+      "t": "Trump ballroom court ruling",
+      "o": "The Associated Press",
+      "u": "https://apnews.com/article/trump-ballroom-court-ruling-1528247275ec6103da892d271d4ee883",
+      "k": "analysis"
+    },
+    {
+      "t": "Judge blocks above-ground construction of Trump’s White House ballroom, administration appeals",
+      "o": "CNBC",
+      "u": "https://www.cnbc.com/2026/04/16/white-house-ballroom-trump-judge.html",
+      "k": "analysis"
+    },
+    {
+      "t": "Judge temporarily halts Trump’s $400m White House ballroom project",
+      "o": "Al Jazeera",
+      "u": "https://www.aljazeera.com/news/2026/4/1/judge-temporarily-halts-trumps-400m-white-house-ballroom-project",
+      "k": "analysis"
+    }
+  ],
+  "questions": [
+    {
+      "q": "Who actually gets to decide what happens to the White House?",
+      "lens": "INSTITUTIONALIST",
+      "heat": 2,
+      "ans": {
+        "n": 7,
+        "p": 0,
+        "conf": "medium",
+        "v": "1d ago",
+        "lead": "Congress, on two courts’ reading so far. The judge who issued the order found no statute granting the president authority to demolish and rebuild part of the building without it, and the appeals court agreed the demolition very likely exceeded that authority.",
+        "facts": [
+          {
+            "t": "Judge Richard J. Leon found the National Trust likely to succeed because \"no statute comes close to giving the President the authority he claims to have.\"",
+            "c": [
+              3
+            ]
+          },
+          {
+            "t": "The reasoning rests on Congress holding constitutional control over federal property.",
+            "c": [
+              2,
+              3
+            ]
+          },
+          {
+            "t": "On <b>7 August</b> the D.C. Circuit upheld the injunction, finding the White House very likely lacked authority for the demolition.",
+            "c": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "The Solicitor General’s answer: the \"President of the United States of America is not a tenant, but rather the sole, elected head of the Executive Branch.\"",
+            "c": [
+              2
+            ]
+          },
+          {
+            "t": "The East Wing was demolished last year without notifying Congress.",
+            "c": [
+              1,
+              3
+            ]
+          }
+        ],
+        "contested": "The government’s position is not that Congress has no role. It is that running the executive branch includes control over the building the executive works in, and that requiring legislative sign-off for changes to the president’s own residence and workplace inverts the relationship. Against that sits the plainest fact in the case: the demolition happened without telling Congress, so the question of what Congress would have said was never reached. Two courts have now treated the absence of a statute as decisive, which is a narrower ruling than it sounds. It says nothing about what Congress could authorise if asked.",
+        "falsify": "A statute or appropriation showing prior congressional authorisation for structural changes of this kind would undercut the whole ruling."
+      },
+      "deeper": [
+        {
+          "secs": 43,
+          "q": "What does the order actually stop?",
+          "c": [
+            3,
+            2
+          ],
+          "a": "Above-ground work on the ballroom, and not much else. The injunction bars demolition, site preparation, landscape alteration, excavation, foundation work and construction at the former East Wing site, with one carve-out: anything strictly necessary to ensure the safety and security of the White House and its grounds.</p><p>Underground work has been permitted to continue throughout. That carve-out matters because it is the direct answer to the security argument. The order does not block security work at the White House. It blocks the ballroom."
+        }
+      ]
+    },
+    {
+      "q": "Who is paying for this, and how does the money get there?",
+      "lens": "FOLLOW-THE-MONEY",
+      "heat": 3,
+      "ans": {
+        "n": 7,
+        "p": 0,
+        "conf": "medium",
+        "v": "1d ago",
+        "lead": "Private donors, through a chain of public bodies. The reported funders include Lockheed Martin, Amazon and Microsoft, and the money moves through a nonprofit to the National Park Service and then into a presidential account.",
+        "facts": [
+          {
+            "t": "The project is reported at <b>$400 million</b>, funded by private donations rather than an appropriation.",
+            "c": [
+              2,
+              7
+            ]
+          },
+          {
+            "t": "Named donors include Lockheed Martin, Amazon and Microsoft.",
+            "c": [
+              2
+            ]
+          },
+          {
+            "t": "The route is donor to nonprofit to the National Park Service to a presidential account.",
+            "c": [
+              2
+            ]
+          },
+          {
+            "t": "The building is a <b>90,000</b> square foot ballroom on a <b>50,000</b> square foot concrete superstructure.",
+            "c": [
+              2
+            ]
+          }
+        ],
+        "contested": "Private funding is the argument in both directions. The administration’s version is that no taxpayer pays for this, which removes the usual objection to a presidential building project outright. The objection is that the three named donors are large federal contractors and technology suppliers, that the finished room sits inside the president’s residence, and that a gift routed through the National Park Service into a presidential account is public money in every respect except where it started. Nothing in the coverage suggests any donor sought anything, and nothing describes what, if anything, they were told they were funding.",
+        "falsify": "A complete donor list with amounts, and the terms attached to each gift, would answer this in a way no amount of argument can."
+      },
+      "deeper": [
+        {
+          "secs": 41,
+          "q": "Why does the funding route matter legally?",
+          "c": [
+            2,
+            3
+          ],
+          "a": "Because it decides which rules apply. Money that arrives as a private gift to a private project is one thing. Money that passes through the National Park Service, a federal agency, and lands in a presidential account is being handled by the government before it is spent.</p><p>That is also why the congressional approval question does not go away just because no taxpayer money is involved. The case is about authority over federal property, not about who wrote the cheque. A gift does not create a power that no statute grants."
+        }
+      ]
+    },
+    {
+      "q": "What is the Supreme Court actually being asked to decide this week?",
+      "lens": "LEGAL",
+      "heat": 2,
+      "ans": {
+        "n": 7,
+        "p": 0,
+        "conf": "high",
+        "v": "1d ago",
+        "lead": "Only who waits. An emergency application asks the court to let construction continue while the appeal is heard. It does not decide whether the demolition was lawful.",
+        "facts": [
+          {
+            "t": "The application was filed on <b>14 August</b>, a week after the D.C. Circuit ruled.",
+            "c": [
+              1,
+              4
+            ]
+          },
+          {
+            "t": "Chief Justice Roberts, who handles emergency matters from the D.C. Circuit, gave the challengers until Tuesday to respond.",
+            "c": [
+              1
+            ]
+          },
+          {
+            "t": "The injunction takes effect on <b>21 August</b> if nothing intervenes.",
+            "c": [
+              1
+            ]
+          },
+          {
+            "t": "The merits of whether the president had authority to demolish and rebuild remain on appeal, undecided.",
+            "c": [
+              1,
+              2
+            ]
+          }
+        ],
+        "contested": "Procedural questions like this are supposed to be about preserving the status quo, and both sides say that is what they are asking for. The government’s status quo is a live construction site that stopping would cost time and money. The challengers’ status quo is a building that was demolished before anyone could object, where each additional month of work makes reversal less realistic. That is the honest reason an emergency application on a construction project is not a small thing: a 90,000 square foot structure that exists tends to keep existing, whatever the appeal eventually says.",
+        "falsify": "If the court grants a stay and later rules against the government, whether anything actually gets removed will show whether the emergency stage decided the case."
+      },
+      "deeper": [
+        {
+          "secs": 40,
+          "q": "Why is this at the Supreme Court so fast?",
+          "c": [
+            1,
+            4
+          ],
+          "a": "Because of the date. The injunction was upheld on <b>7 August</b> and takes effect on <b>21 August</b>, so the government had two weeks to find someone who could stop it. That is the emergency docket working as designed: quick decisions on whether a lower court order operates while an appeal runs.</p><p>What it costs is depth. There is no full briefing, no argument, and no detailed opinion required. The response deadline here is a Tuesday, and the decision rests on written applications about a building that has already been half demolished."
+        }
+      ]
+    },
+    {
+      "q": "Is a drone port on the roof a security requirement?",
+      "lens": "NAT-SEC",
+      "heat": 3,
+      "ans": {
+        "n": 7,
+        "p": 0,
+        "conf": "low",
+        "v": "1d ago",
+        "lead": "The order already allows security work, which is the problem with the argument. Anything strictly necessary for the safety and security of the White House and its grounds is carved out of the injunction.",
+        "facts": [
+          {
+            "t": "The Solicitor General told the court the injunction halts construction of an \"integrated military complex, including a totally secure ballroom space\" that is \"vitally required by national security.\"",
+            "c": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "Trump has argued the project is a matter of national security and military readiness, describing a drone port on the roof.",
+            "c": [
+              1
+            ]
+          },
+          {
+            "t": "Assassination threats have been cited in support of the secure-space argument.",
+            "c": [
+              2
+            ]
+          },
+          {
+            "t": "The injunction expressly permits actions strictly necessary to ensure the safety and security of the White House and its grounds, and underground work has continued.",
+            "c": [
+              3,
+              2
+            ]
+          }
+        ],
+        "contested": "The security claim is not obviously bad faith. Presidential facilities do carry hardened elements, threats against presidents are real and documented, and a court is poorly placed to second-guess what protection requires. The difficulty is structural: the order already exempts security work, so for the argument to matter, the ballroom itself has to be the security measure. That is the case the government is making, and it is why the phrase \"totally secure ballroom space\" is doing so much work in a filing that runs on national security.",
+        "falsify": "A classified or public security assessment showing the ballroom structure itself is required for protection would move this from a framing to a fact."
+      },
+      "deeper": [
+        {
+          "secs": 40,
+          "q": "What is an integrated military complex doing at a residence?",
+          "c": [
+            1,
+            2
+          ],
+          "a": "That phrase is the government’s, and it is describing the whole East Wing site rather than a room. The claim bundles the ballroom with hardened and secure facilities into one project, so that stopping the ballroom means stopping the security work.</p><p>The counter is in the order itself, which separates them: security work continues, the ballroom does not. Which of those descriptions is accurate is a factual question about the building plans, and no version of those plans has been published in the coverage gathered."
+        }
+      ]
+    }
+  ],
+  "deep": {
+    "standfirst": "The building at the centre of this is half gone already, and that fact is doing more work in the case than any argument either side has made.",
+    "sections": [
+      {
+        "h": "The demolition happened first",
+        "p": [
+          "The East Wing came down last year without notifying Congress. Every legal question since has been asked backwards, about a hole in the ground rather than a proposal, and about whether to allow a structure to keep rising on it.",
+          "That sequence is why the courts have found what they have. A judge does not have to decide whether Congress would have approved the project. He only has to find that no statute allowed it to proceed without asking, which is what both courts have now said."
+        ]
+      },
+      {
+        "h": "What an emergency ruling settles",
+        "p": [
+          "The Supreme Court is not being asked whether the president may rebuild the White House. It is being asked whether work continues while that question is answered somewhere else.",
+          "On a construction site those are close to the same question. Concrete already poured is a fact on the ground, the appeal will take months, and the underground portion has been permitted throughout. Whatever the court says by <b>21 August</b>, it will be saying it about a building that is already partly there."
+        ]
+      }
+    ]
+  }
+},
+{
+  id: 'p3', cat: 'politics',
+  "catLabel": "Politics",
+  "headline": "A judge threw out the case that could have cost Harvard $1 billion",
+  "questionsCount": 4
+},
+{
+  id: 'p2', cat: 'politics',
+  "catLabel": "Politics",
+  "headline": "The big case over a 1798 wartime law just ended without an answer",
+  "questionsCount": 4
+},
+]; // @POLITICS
+const TECH = []; // @TECH
+const WORLD = []; // @WORLD
+const SCIENCE = []; // @SCIENCE
+const ARTS = []; // @ARTS
+const MONEY = []; // @MONEY
+const HEALTH = []; // @HEALTH
+const SPORTS = []; // @SPORTS
+const DATA = [].concat(POLITICS, TECH, WORLD, SCIENCE, MONEY, HEALTH, SPORTS, ARTS);
+
+/* long-form reads, attached by story id */
+const DEEP = {}; // @DEEP
+DATA.forEach(s => { if (!s.deep && DEEP[s.id]) s.deep = DEEP[s.id]; });
+
+const CATS = [
+  { id: 'all', label: 'All' }, { id: 'politics', label: 'Politics' }, { id: 'tech', label: 'Tech & AI' },
+  { id: 'money', label: 'Money & Work' }, { id: 'health', label: 'Health' }, { id: 'sports', label: 'Sports' },
+  { id: 'world', label: 'World' }, { id: 'science', label: 'Science' }, { id: 'arts', label: 'Arts' },
+];
+
+/* ---- generated story marks: one motif per story ---- */
+const ART = {
+  map:   '<path d="M6 10l12-4 12 4 12-4v28l-12 4-12-4-12 4z"/><path d="M18 6v28M30 10v28"/>',
+  grid:  '<path d="M24 4v40M12 44h24"/><path d="M24 10l-9 34M24 10l9 34"/><path d="M17 20h14M15 30h18"/>',
+  scale: '<path d="M24 8v32M12 40h24M8 16h32"/><path d="M8 16l-4 10a6 6 0 0012 0zM40 16l-4 10a6 6 0 0012 0z"/>',
+  fence: '<path d="M10 14v28M18 14v28M26 14v28M34 14v28M6 22h32M6 32h32"/><path d="M6 14a18 10 0 0132 0"/>',
+  chart: '<path d="M6 42h36"/><path d="M11 42V26M19 42V18M27 42V30M35 42V8"/><path d="M6 14l10-4 10 8 12-8" stroke-dasharray="3 3"/>',
+  eye:   '<circle cx="24" cy="24" r="7"/><path d="M4 24c6-9 13-13 20-13s14 4 20 13c-6 9-13 13-20 13S10 33 4 24z"/><path d="M24 4v5M24 39v5"/>',
+  chip:  '<rect x="14" y="14" width="20" height="20" rx="2"/><path d="M20 8v6M28 8v6M20 34v6M28 34v6M8 20h6M8 28h6M34 20h6M34 28h6"/>',
+  bubble:'<path d="M8 10h32v22H26l-8 8v-8H8z"/><path d="M14 18h6M14 24h14"/><path d="M28 18l3 3 5-6" />',
+  shield:'<path d="M24 5l16 6v13c0 10-7 17-16 20-9-3-16-10-16-20V11z"/><path d="M18 24h12M24 18v12"/>',
+  tower: '<circle cx="12" cy="12" r="6"/><path d="M28 44V16l6-6 6 6v28M28 26h12M28 34h12"/><path d="M4 44h40"/>',
+  drone: '<circle cx="11" cy="13" r="6"/><circle cx="37" cy="13" r="6"/><path d="M15 17l6 6M33 17l-6 6"/><rect x="19" y="23" width="10" height="8" rx="1"/><path d="M24 31v8M20 43h8"/>',
+  curve: '<path d="M6 42h36"/><path d="M6 10c8 0 8 26 16 26s8-16 16-16"/><circle cx="38" cy="20" r="3"/>',
+  pill:  '<rect x="8" y="18" width="32" height="12" rx="6" transform="rotate(-30 24 24)"/><path d="M18 30l12-12"/>',
+  flask: '<path d="M19 6v13L8 40a3 3 0 003 4h26a3 3 0 003-4L29 19V6"/><path d="M16 6h16M14 30h20"/>',
+  sun:   '<circle cx="24" cy="20" r="8"/><path d="M24 4v4M24 32v4M8 20h4M36 20h4M13 9l3 3M35 9l-3 3"/><path d="M6 40h36" stroke-dasharray="4 3"/>',
+  atom:  '<circle cx="24" cy="24" r="4"/><ellipse cx="24" cy="24" rx="19" ry="8"/><ellipse cx="24" cy="24" rx="19" ry="8" transform="rotate(60 24 24)"/><ellipse cx="24" cy="24" rx="19" ry="8" transform="rotate(120 24 24)"/>',
+  wave:  '<path d="M4 24h5l4-12 5 26 5-32 5 38 5-24 4 4h7"/>',
+  frame: '<rect x="7" y="9" width="34" height="30" rx="1"/><rect x="13" y="15" width="22" height="18"/><path d="M13 33l7-9 5 5 4-6 6 10"/>',
+  nib:   '<path d="M24 4l12 26-12 14-12-14z"/><path d="M24 4v40M14 26h20"/><circle cx="24" cy="26" r="3"/>',
+  film:  '<rect x="6" y="12" width="36" height="24" rx="2"/><path d="M14 12v24M34 12v24"/><path d="M10 17h2M10 23h2M10 29h2M38 17h-2M38 23h-2M38 29h-2"/>',
+  coin:  '<circle cx="24" cy="24" r="16"/><path d="M24 14v20M20 19h6a3 3 0 010 6h-4a3 3 0 000 6h6"/>',
+  cross: '<path d="M19 6h10v13h13v10H29v13H19V29H6V19h13z"/>',
+  ball:  '<circle cx="24" cy="24" r="17"/><path d="M24 7c-6 5-9 11-9 17s3 12 9 17M24 7c6 5 9 11 9 17s-3 12-9 17"/><path d="M8 18h32M8 30h32"/>',
+  house: '<path d="M6 22L24 7l18 15"/><path d="M11 20v20h26V20"/><path d="M20 40V28h8v12"/>',
+  cart:  '<circle cx="18" cy="39" r="3"/><circle cx="34" cy="39" r="3"/><path d="M5 8h6l5 24h22l4-16H14"/>',
+  brain: '<path d="M24 10v28"/><path d="M24 12a7 7 0 00-13 3 6 6 0 00-2 9 6 6 0 004 9 7 7 0 0011 3"/><path d="M24 12a7 7 0 0113 3 6 6 0 012 9 6 6 0 01-4 9 7 7 0 01-11 3"/>',
+  clock: '<circle cx="24" cy="24" r="17"/><path d="M24 13v11l8 5"/>',
+};
+const mark = k => `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6"
+  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ART[k] || ART.chart}</svg>`;
+
+const feedEl = document.getElementById('feed');
+const topEl  = document.getElementById('topics');
+let filter = 'all';
+const chatSeq = {};            // storyId -> ordered asks: 'q<qIdx>' | 'd<qIdx>-<dIdx>'
+const extraComments = {};
+/* votes/reactions/flag state removed in the static-site pass (Aug 14) */
+let intake = null;             // pasted-URL pipeline state
+const ddState = {};            // details key ("long::p1") -> open? — survives re-renders
+const ddOpen = (key, def) => key in ddState ? ddState[key] : !!def;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- citation markers: (1)(2) that reveal the source on hover ---- */
+/* Evidence classes — the NewsGap evidence ladder, rendered per citation.
+   Each class states what a source of that kind is evidence OF, because most
+   sourcing failures are rung confusion, not fabrication. */
+const KIND = {
+  primary:  { chip: 'primary record', why: 'The strongest class: statute, ruling, filing, contract or original record. The document itself.' },
+  data:     { chip: 'official data',  why: 'A measured series with published methodology. The class is strong; the producing institution still gets weighed.' },
+  study:    { chip: 'research',       why: 'A study or research finding. One study is a data point, not a truth. Not all research is peer-reviewed to the same standard.' },
+  inst:     { chip: 'institutional',  why: 'An interested institution speaking. Strong proof the institution said it. Weak proof that it is true.' },
+  analysis: { chip: 'analysis',       why: 'Expert or institutional interpretation of evidence. Check the method, not the brand.' },
+  report:   { chip: 'reporting',      why: 'Secondary reporting — reliable in proportion to the documents it shows.' },
+};
+
+function cites(story, arr) {
+  if (!arr || !arr.length) return '';
+  return arr.map(n => {
+    const r = story.refs[n - 1];
+    if (!r) return '';
+    return `<span class="cw"><button class="cite" data-cite="1" aria-label="Source ${n}: ${esc(r.o)}">${n}</button>` +
+      `<span class="pop" role="tooltip"><span class="pop-o">${esc(r.o)}</span>${esc(r.t)}` +
+      `<a class="pop-u" href="${esc(r.u)}" target="_blank" rel="noopener noreferrer">${esc(r.u.replace(/^https?:\/\//, ''))} ↗</a></span></span>`;
+  }).join('');
+}
+/* Avoidance is an editorial judgement, not a measurement. It was previously
+   rendered as three bars with a hover-only tooltip — a hover affordance fails
+   on touch, and readers asked what it meant, which is the answer. It is now an
+   always-visible chip that names itself as a judgement. Grounding it in a real
+   coverage count is the follow-on work; until then it does not get to look
+   like a measurement inside a product built on falsifiability. */
+const HEAT_WORDS = { 1: 'Sometimes asked', 2: 'Rarely asked', 3: 'Almost never asked' };
+function heat(n) {
+  return `<span class="hw"><span class="avoid" tabindex="0" data-n="${n}"
+      aria-label="Editorial judgement: ${HEAT_WORDS[n]} by mainstream coverage">
+      <span class="heat" aria-hidden="true">${[1,2,3].map(i => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</span>
+      <span class="avoid-t">${HEAT_WORDS[n]}</span></span>` +
+    `<span class="pop" role="tooltip"><span class="pop-h">Editorial judgement</span>` +
+    `Our reading of how rarely mainstream coverage asks this — usually because it is awkward, slow to ` +
+    `research, or costly to a source relationship. It rates <b>absence from coverage</b>, not how ` +
+    `outrageous the question is.<span class="pop-scale">Not yet measured against a coverage corpus.</span></span></span>`;
+}
+/* Reader-tester feedback: "rarely asked" alone wasn't a draw on every tile, and
+   what they wanted was the fact-checked disagreement between the sides. The
+   avoidance chip now marks only the questions where absence from coverage IS
+   the story (heat 3); the rest advertise the split the answer adjudicates. */
+function splitChip() {
+  return `<span class="hw"><span class="avoid split" tabindex="0"
+      aria-label="Editorial judgement: the record genuinely divides on this question">
+      <span class="avoid-t">Sides split</span></span>` +
+    `<span class="pop" role="tooltip"><span class="pop-h">Editorial judgement</span>` +
+    `The record genuinely divides on this one. The answer states each side's strongest case, ` +
+    `how lopsided the split actually is, and what evidence would settle it.` +
+    `<span class="pop-scale">Adjudicated in the open, in the answer below.</span></span></span>`;
+}
+/* Lenses are a generation constraint, not a badge for the reader. Partisan
+   labels sort people before they inform them, and most readers don't match the
+   label anyway. The taxonomy stays upstream and drives which questions get
+   written; what the reader sees is the *motive* behind the question. */
+const LENS_MOTIVE = {
+  'MARKET':          'Follows the money',
+  'HERETIC':         'Questions the premise',
+  'INSTITUTIONALIST':'Asks who decides',
+  'PROGRESSIVE':     'Asks who bears the cost',
+  'LIBERTARIAN':     'Asks by what authority',
+  'CONSERVATIVE':    'Asks what change costs',
+  'GREEN':           'Asks about the long run',
+  'POPULIST':        'Asks who profits',
+  'NAT-SEC':         'Asks what a rival does',
+  'PUBLIC HEALTH':   'Asks who gets hurt',
+  'LABOR':           'Asks who does the work',
+  'ANTI-AI':         'Asks what it displaces',
+  'AI-SAFETY':       'Asks what if it fails',
+  'ACCELERATIONIST': 'Asks the cost of waiting',
+  'DOOMER':          'Asks how bad it gets',
+};
+const motive = l => LENS_MOTIVE[l] || 'Asks what is missing';
+
+const confClass = c => c === 'high' ? 'conf-hi' : c === 'low' ? 'conf-lo' : 'conf-md';
+
+/* A bare low/medium/high rating is an unexplained verbal hedge — the
+   uncertainty-communication research is clear that those cost more trust than
+   grounded ones. Confidence is now derived from, and states, what it rests on:
+   how many primary documents back the answer, and whether they agree. */
+function confBasis(a) {
+  const src = `${a.p} primary of ${a.n} sources`;
+  if (a.conf === 'high') return `${src} · sources agree`;
+  if (a.conf === 'low')  return `${src} · thin or conflicting record`;
+  return `${src} · sources partly diverge`;
+}
+
+/* Reactions and the simulated flag→re-run loop removed in the static-site
+   pass (Aug 14). The predicate-reaction design and the flag state machine
+   are recorded in PRD.md (v7/v8) for when a real backend exists. */
+
+/* Long-read length is measured, never declared — a stored number drifts the
+   moment the prose is edited, and this product does not ship numbers it
+   cannot verify. 238 wpm is Brysbaert (2019), silent reading, non-fiction. */
+const WPM = 238;
+function deepStats(d) {
+  const words = d.sections.reduce((a, sec) => a + sec.p.reduce(
+    (b, p) => b + p.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length, 0), 0);
+  return { words, mins: Math.max(1, Math.round(words / WPM)) };
+}
+/* v13: one read, one measured time — brief lede + standfirst + sections. */
+function readStats(s) {
+  const count = t => String(t).replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+  let words = s.brief.reduce((a, p) => a + count(p), 0);
+  if (s.deep) words += count(s.deep.standfirst) + deepStats(s.deep).words;
+  return { words, secs: Math.round(words / WPM * 60) };
+}
+const readTag = s => { const r = readStats(s);
+  return r.secs < 90 ? `The ${Math.round(r.secs / 5) * 5}-second read` : `The ${Math.round(r.secs / 60)}-minute read`; };
+const readShort = s => { const r = readStats(s);
+  return r.secs < 90 ? `${Math.round(r.secs / 5) * 5}s read` : `${Math.round(r.secs / 60)}m read`; };
+const initials = n => n.replace(/[^A-Za-z ]/g,'').split(/\s+/).slice(0,2).map(w => w[0]||'').join('').toUpperCase() || '??';
+
+function renderTopics() {
+  if (!topEl) return;
+  topEl.innerHTML = CATS.map(c => {
+    const n = c.id === 'all' ? DATA.length : DATA.filter(s => s.cat === c.id).length;
+    return `<button class="topic" aria-pressed="${c.id === filter}" data-cat="${c.id}">${c.label}<span class="topic-n">${n}</span></button>`;
+  }).join('');
+}
+topEl?.addEventListener('click', e => {
+  const b = e.target.closest('.topic'); if (!b) return;
+  filter = b.dataset.cat; renderTopics(); render();
+  window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+});
+
+/* Voting and scores removed (static-site pass, Aug 14) — nothing renders a
+   number the product can't actually count. */
+
+function render() {
+  if (PAGE_STORY_ID) {
+    const story = DATA.find(s => s.id === PAGE_STORY_ID);
+    feedEl.innerHTML = story ? `<article class="post" data-open="true" data-id="${story.id}">${storyHead(story)}${body(story)}</article>` : '';
+    return;
+  }
+  const list = DATA.filter(s => filter === 'all' || s.cat === filter);
+  /* intakeCard() hidden for now (product decision, Aug 14) — the paste-a-URL
+     card and its pipeline animation are kept intact for re-enabling. */
+  feedEl.innerHTML = `<div class="count">${list.length} stories · ${list.reduce((a,s)=>a+s.questions.length,0)} unasked questions · updated 06:40</div>`
+    + list.map(post).join('');
+}
+
+/* ---- paste any news URL ---- */
+const STAGES = ['fetching page', 'extracting the claim', 'finding primary sources', 'checking figures', 'drafting the 20-second read', 'generating perspective questions'];
+function intakeCard() {
+  let inner;
+  if (intake && intake.stage < STAGES.length) {
+    inner = `<div class="pipe">${STAGES.map((s, i) => `<div class="pstep ${i < intake.stage ? 'done' : i === intake.stage ? 'now' : ''}">
+      <span class="pdot">${i < intake.stage ? '✓' : i === intake.stage ? '<span class="dot"></span>' : '○'}</span>${esc(s)}</div>`).join('')}</div>`;
+  } else if (intake) {
+    inner = `<div class="pipe-out">
+      <div class="sub">Submitted link</div>
+      <div class="pipe-url">${esc(intake.url)}</div>
+      <p class="ask-p" style="margin-top:12px">A live Tellum run reads this page, pulls the underlying claim, finds the primary sources behind it, and posts a card in the format below — the brief, the record, and questions written for the specific viewpoints this story splits people into.</p>
+      <p class="ask-p"><b>This prototype cannot do that here.</b> It has no network access, and inventing a summary of a page it has not read is exactly the failure mode the product exists to avoid. Nothing below this line is generated from your link.</p>
+      <button class="chip" data-clear="1">Clear and browse the ${DATA.length} pre-researched stories</button>
+    </div>`;
+  } else {
+    inner = `<form class="composer intake-form" data-intake="1">
+      <input type="url" placeholder="Paste any news URL — Tellum will brief it and find the unasked questions" aria-label="Paste a news URL">
+      <button type="submit">Run</button>
+    </form>`;
+  }
+  return `<section class="intake"><div class="intake-h"><span class="intake-t">Add your own story</span>
+    <span class="intake-s">Paste a link · get the 20-second read and the questions nobody asked</span></div>${inner}</section>`;
+}
+
+function post(s) {
+  return `<article class="post" data-open="false" data-id="${s.id}">
+      <a class="head" href="story/${s.id}.html">
+        <span class="thumb">${mark(s.art)}</span>
+        <span>
+          <span class="hmeta"><span class="cat">${esc(s.catLabel)}</span><span>${ageFromPublishedAt(s.published_at)}</span><span>${readShort(s)}</span></span>
+          <h2 class="htitle">${esc(s.headline)}</h2>
+          <p class="hdek">${esc(s.dek)}</p>
+          <span class="hfoot">
+            <span>${s.refs.length} sources</span>
+          </span>
+        </span>
+        <span class="caret">›</span>
+      </a>
+  </article>`;
+}
+
+function storyHead(s) {
+  return `<div class="head">
+    <span class="thumb">${mark(s.art)}</span>
+    <span>
+      <span class="hmeta"><span class="cat">${esc(s.catLabel)}</span><span>${ageFromPublishedAt(s.published_at)}</span><span>${readShort(s)}</span></span>
+      <h1 class="htitle">${esc(s.headline)}</h1>
+      <p class="hdek">${esc(s.dek)}</p>
+      <span class="hfoot"><span>${s.refs.length} sources</span></span>
+    </span>
+  </div>`;
+}
+
+function ageFromPublishedAt(publishedAt) {
+  const elapsed = Math.max(0, Date.now() - Date.parse(publishedAt));
+  const minute = 60 * 1000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  const week = 7 * day;
+  if (elapsed < hour) return `${Math.floor(elapsed / minute)}m`;
+  if (elapsed < day) return `${Math.floor(elapsed / hour)}h`;
+  if (elapsed < week) return `${Math.floor(elapsed / day)}d`;
+  return `${Math.floor(elapsed / week)}w`;
+}
+
+/* ---- topic navigation: up, down, sideways ----
+   No story is a singleton. UP climbs to the chain of events and the principle
+   in tension underneath; SIDEWAYS crosses to connected stories in this feed;
+   DOWN is the gap — the question grid below. UP arcs and SIDEWAYS links
+   cover all 26 stories. */
+const UP = {
+  "p7": {
+    "q": "How far can a president go with a building the public owns?",
+    "arc": [
+      {
+        "when": "Last year",
+        "claim": "The East Wing is demolished without notifying Congress, to make room for a $400 million ballroom."
+      },
+      {
+        "when": "31 Mar 2026",
+        "claim": "Judge Richard J. Leon halts the project absent congressional approval, writing that no statute comes close to granting the authority claimed."
+      },
+      {
+        "when": "16 Apr 2026",
+        "claim": "Above-ground construction is blocked while underground work continues. The administration appeals."
+      },
+      {
+        "when": "7 Aug 2026",
+        "claim": "The D.C. Circuit upholds the injunction, finding the White House very likely lacked authority for the demolition."
+      },
+      {
+        "when": "14 Aug 2026",
+        "claim": "The Solicitor General asks the Supreme Court to let building continue, calling the site an integrated military complex."
+      },
+      {
+        "when": "21 Aug 2026",
+        "claim": "The injunction takes effect unless the court intervenes first."
+      }
+    ],
+    "principle": "Whether the president is the steward of the White House or its owner."
+  }
+}; // @UP
+const SIDE = {
+  "p7": [
+    {
+      "id": "p3",
+      "why": "The other case this year testing how far the executive can go before a judge stops it"
+    },
+    {
+      "id": "p2",
+      "why": "A separation-of-powers fight that ended without an answer"
+    }
+  ]
+}; // @SIDE
+
+/* Navigation is spatial, not labeled: the past sits above the questions
+   (How we got here, a timeline that reads left-to-right into today), depth
+   sits in the middle (the gap and its go-deeper threads), and connected
+   stories sit at the exit, where what-next intent actually lives. The
+   reader never needs to learn an axis vocabulary. */
+/* The arc doubles as the newcomer on-ramp: readers already following the
+   story scroll past one quiet row; readers arriving fresh get the catch-up
+   before the gap asks them what coverage missed. */
+function arcStrip(s) {
+  const up = UP[s.id];
+  if (!up) return '';
+  return `<details class="dd onramp" data-dd="arc::${s.id}"${ddOpen('arc::' + s.id) ? ' open' : ''}>
+    <summary><span class="onramp-t"><b>New to this story?</b> How we got here — the catch-up</span>
+      <span class="dd-n">${up.arc.length} moments</span></summary>
+    <div class="arc">
+    <div class="arc-h"><span class="arc-q">${esc(up.q)}</span></div>
+    <div class="arc-track">
+      ${up.arc.map(r => `<div class="arc-node"><span class="arc-when">${esc(r.when)}</span><span class="arc-claim">${esc(r.claim)}</span></div>`).join('')}
+      <div class="arc-node arc-today"><span class="arc-when">Today</span><span class="arc-claim">${esc(s.headline)}</span></div>
+    </div>
+    <div class="arc-fight"><span class="arc-tag2">The fight underneath</span>${esc(up.principle)}</div>
+  </div></details>`;
+}
+
+function connRail(s) {
+  const side = SIDE[s.id];
+  if (!side || !side.length) return '';
+  return `<div class="conn">
+    <div class="conn-h">Where this story goes next</div>
+    ${side.map(l => { const t = DATA.find(x => x.id === l.id); if (!t) return '';
+      return `<a class="conn-card" href="${PAGE_STORY_ID ? '' : 'story/'}${l.id}.html">
+        <span class="conn-why">${esc(l.why)}</span>
+        <span class="conn-head">${esc(t.headline)}</span>
+        <span class="conn-meta">${esc(t.catLabel)} · ${t.questionsCount ?? t.questions.length} unasked questions</span>
+      </a>`; }).join('')}
+  </div>`;
+}
+
+/* The two-track record (developing → settled), demonstrated on a story whose
+   record genuinely evolved in public. Each dated claim carries what it rested
+   on and its current status — readers watch the record firm up or get revised. */
+function recPanel(s) {
+  return `<details class="rec" data-dd="rec::${s.id}"${ddOpen('rec::' + s.id, true) ? ' open' : ''}>
+    <summary>How this record evolved<span class="dd-n">${s.record.length}</span></summary>
+    ${s.record.map(r => `<div class="rec-row"><span class="rec-when">${esc(r.when)}</span><span>
+      <span class="rec-claim">${esc(r.claim)}${cites(s, r.c)}</span>
+      <span class="rec-meta"><span class="rec-basis">${esc(r.basis)}</span>
+        <span class="rec-st ${r.status === 'held' ? 'held' : 'revised'}">${r.status === 'held' ? 'Held' : 'Revised'}</span></span>
+      ${r.note ? `<div class="rec-note">${esc(r.note)}</div>` : ''}</span></div>`).join('')}
+  </details>`;
+}
+
+/* v12 reading model: one progressive reading surface. The brief is the opening
+   of the story, the full read continues it in place, and the catch-up sits
+   beside them for readers arriving fresh — depth is chosen, never scattered. */
+function numsRow(s) {
+  if (!s.stats || !s.stats.length) return '';
+  return `<div class="nums"><span class="nums-h">By the numbers</span>${s.stats.map(t =>
+    `<span><span class="num-v">${esc(t[0])}</span> ${esc(t[1])}</span>`).join('')}</div>`;
+}
+
+function body(s) {
+  return `<div class="body">
+    <div class="divider"></div>
+    <div class="tag-row"><span class="brief-tag">${readTag(s)}</span>
+      <button class="src-jump" data-srcjump="1" title="Every figure below is traced to one of these sources">briefed from ${s.refs.length} sources</button></div>
+    ${arcStrip(s)}
+    <div class="brief">${s.brief.map(p => `<p>${p}</p>`).join('')}</div>
+    ${s.deep ? `<div class="full">
+      <p class="long-standfirst">${s.deep.standfirst}</p>
+      ${s.deep.sections.map(sec => `<section class="long-sec"><h3 class="long-h">${esc(sec.h)}</h3>
+        ${sec.p.map(p => `<p>${p}</p>`).join('')}</section>`).join('')}
+    </div>` : ''}
+    ${numsRow(s)}
+    ${s.record ? recPanel(s) : ''}
+
+    <div class="gap">
+      <span class="gap-label">The gap</span>
+      <span class="gap-note">${s.questions.length} questions the coverage didn't answer — where nobody asks, and where the sides split</span>
+      <span class="gap-rule"></span>
+    </div>
+
+    ${chatFlow(s)}
+
+    ${connRail(s)}
+  </div>`;
+}
+
+/* Sources live behind the "briefed from N sources" tap as a modal — the
+   in-body panels were pure vertical height once every answer's citation
+   markers already reveal their source on hover. */
+function openSources(s) {
+  modalRoot.innerHTML = `<div class="modal-wrap" role="dialog" aria-modal="true" aria-label="Sources: ${esc(s.headline)}">
+    <div class="modal">
+      <div class="modal-head"><span>Sources</span><span class="dd-n">${s.refs.length}</span>
+        <button class="modal-x" aria-label="Close">✕</button></div>
+      <div class="modal-body">
+        ${s.refs.map((r,i) => `<div class="ref"><span class="ref-n">${i+1}</span><span>
+          <a href="${esc(r.u)}" target="_blank" rel="noopener noreferrer">${esc(r.t)}</a>
+          <span class="ref-o"> · ${esc(r.o)}</span>${r.k && KIND[r.k] ? `<span class="ref-k" title="${esc(KIND[r.k].why)}">${KIND[r.k].chip}</span>` : ''}</span></div>`).join('')}
+        ${s.reading && s.reading.length ? `<div class="modal-sub">Related reading</div>
+        ${s.reading.map(r => `<div class="ref"><span class="ref-n">→</span><span>
+          <a href="${esc(r.u)}" target="_blank" rel="noopener noreferrer">${esc(r.t)}</a>
+          <span class="ref-o"> · ${esc(r.o)}</span></span></div>`).join('')}` : ''}
+      </div>
+    </div></div>`;
+  document.body.style.overflow = 'hidden';
+  modalRoot.querySelector('.modal-x').focus();
+}
+function closeSources() { modalRoot.innerHTML = ''; document.body.style.overflow = ''; }
+
+function answer(s, q, i) {
+  const a = q.ans;
+  return `<div class="ans">
+    <div class="ans-meta">
+      <span><b>Research pass</b></span><span>${a.n} sources · ${a.p} primary</span>
+      <span title="${esc(confBasis(a))}">confidence: <span class="${confClass(a.conf)}">${a.conf}</span>
+        <span class="conf-why">${esc(confBasis(a))}</span></span><span>verified ${esc(a.v)}</span>
+    </div>
+    <div class="ans-lead">${a.lead}${cites(s, a.c)}</div>
+
+    <div><div class="sub">What the record shows</div>
+      <ul class="facts">${a.facts.map(f => `<li><span>${f.t}${cites(s, f.c)}</span></li>`).join('')}</ul></div>
+
+    ${a.quote ? `<div class="quote">“${esc(a.quote.t)}”<span class="quote-w">${esc(a.quote.w)}</span></div>` : ''}
+
+    <div class="blk-hot"><div class="sub">Where opinions diverge</div><div class="txt">${a.contested}</div></div>
+    <div class="blk-cold"><div class="sub">What would change this answer</div><div class="txt">${a.falsify}</div></div>
+  </div>`;
+}
+
+/* v17: the gap as a conversation. The reader's chosen questions render as
+   sent bubbles, each cold answer as a received one, and what's still
+   askable arrives as quick-reply pills — the question's own go-deeper
+   threads first, then unasked gap questions as a change of direction.
+   The transcript accumulates per story (session state, like the old
+   open-tile state), so a reader's line of inquiry stays on the page. */
+function chatFlow(s) {
+  const seq = chatSeq[s.id] || [];
+  const askedQ = new Set(seq.filter(k => k[0] === 'q').map(k => +k.slice(1)));
+  const askedD = new Set(seq.filter(k => k[0] === 'd'));
+  /* pills sort by heat so the genuinely-avoided questions lead */
+  const qOrder = s.questions.map((q, i) => [q, i]).sort((a, b) => b[0].heat - a[0].heat);
+  /* v18: lens/heat chips hidden from pills — labels where the reader is
+     choosing read as clutter. Data retained; the motive survives as a
+     hover title, and the answer's meta line still carries provenance. */
+  const qPill = ([q, i]) => `<button class="chip-q" data-chat="q${i}" title="Question written from the ${esc(q.lens)} viewpoint — ${esc(motive(q.lens))}">${esc(q.q)}</button>`;
+  const dPill = (qi, d, j) => `<button class="chip-q" data-chat="d${qi}-${j}"><span>${esc(d.q)}</span><span class="chip-m">${d.secs}s</span></button>`;
+
+  let flow = `<div class="msg msg-t"><p>Ask one. Each has been researched against the record — every figure traced to a source, or marked as having none.</p></div>`;
+  seq.forEach(k => {
+    if (k[0] === 'q') {
+      const i = +k.slice(1), q = s.questions[i];
+      if (!q) return;
+      flow += `<div class="msg msg-you">${esc(q.q)}</div>
+        <div class="msg msg-t">${answer(s, q, i)}</div>`;
+    } else {
+      const [qi, j] = k.slice(1).split('-').map(Number);
+      const q = s.questions[qi], d = q && q.deeper[j];
+      if (!d) return;
+      flow += `<div class="msg msg-you">${esc(d.q)}</div>
+        <div class="msg msg-t"><div class="deep-t"><p>${d.a}${cites(s, d.c)}</p></div>
+          <div class="deep-m">${d.secs}s read</div></div>`;
+    }
+  });
+
+  const lastK = seq[seq.length - 1];
+  const unaskedQ = qOrder.filter(([q, i]) => !askedQ.has(i));
+  let pills = '';
+  if (!lastK) {
+    pills = `<div class="chip-h">Pick your first question</div>
+      <div class="chat-chips">${unaskedQ.map(qPill).join('')}</div>`;
+  } else {
+    const qi = +(lastK[0] === 'q' ? lastK.slice(1) : lastK.slice(1).split('-')[0]);
+    const q = s.questions[qi];
+    const deeper = q.deeper.map((d, j) => [d, j]).filter(([d, j]) => !askedD.has('d' + qi + '-' + j));
+    pills = (deeper.length ? `<div class="chip-h">Ask a follow-up</div>
+        <div class="chat-chips">${deeper.map(([d, j]) => dPill(qi, d, j)).join('')}</div>` : '')
+      + (unaskedQ.length ? `<div class="chip-h">${deeper.length ? 'Or change direction' : 'This thread is done — change direction'}</div>
+        <div class="chat-chips">${unaskedQ.slice(0, 3).map(qPill).join('')}</div>` : '')
+      + (!deeper.length && !unaskedQ.length ? `<div class="chat-done">You've asked everything here. The transcript above is your record — or move on to a connected story below.</div>` : '');
+  }
+  return flow + pills;
+}
+/* Comments are hidden for now (product decision, Aug 14) — the comments()
+   renderer, seeded threads, and composer handler are kept intact so the
+   discussion layer can be re-enabled by re-adding the .talk block here. */
+
+function comments(key, seeded) {
+  const all = seeded.concat(extraComments[key] || []);
+  if (!all.length) return `<div class="empty">No comments yet. Be the first to push back — on the framing, not the facts.</div>`;
+  return `<div class="cmt">` + all.map((c, i) => `<div class="cmt-row">
+    <div class="cmt-l"></div>
+    <div><div class="cmt-h"><span class="av">${esc(initials(c.who))}</span><b>${esc(c.who)}</b> · ${esc(c.when)}</div>
+    <div class="cmt-t">${esc(c.text)}</div></div></div>`).join('') + `</div>`;
+}
+
+/* ---- interactions ---- */
+feedEl.addEventListener('click', e => {
+  /* citation markers toggle their source popup (hover fails on touch);
+     any other click closes whatever popup is open */
+  const citeBtn = e.target.closest('[data-cite]');
+  if (citeBtn) {
+    const cw = citeBtn.closest('.cw');
+    feedEl.querySelectorAll('.cw.open').forEach(x => { if (x !== cw) x.classList.remove('open'); });
+    cw.classList.toggle('open');
+    return;
+  }
+  feedEl.querySelectorAll('.cw.open').forEach(x => x.classList.remove('open'));
+
+  if (e.target.closest('a')) return;
+  if (e.target.closest('[data-clear]')) { intake = null; render(); return; }
+  if (e.target.closest('summary')) return;
+
+  const art = e.target.closest('.post'); if (!art) return;
+  const id = art.dataset.id;
+
+  if (e.target.closest('[data-srcjump]')) {
+    const s = DATA.find(x => x.id === id);
+    if (s) openSources(s);
+    return;
+  }
+
+  const chat = e.target.closest('[data-chat]');
+  if (chat) {
+    /* static site: content is pre-researched, so the answer arrives
+       instantly — no pretend research pass */
+    const seq = chatSeq[id] = chatSeq[id] || [];
+    if (seq[seq.length - 1] !== chat.dataset.chat) seq.push(chat.dataset.chat);
+    render();
+    const asks = feedEl.querySelectorAll(`.post[data-id="${CSS.escape(id)}"] .msg-you`);
+    const lastAsk = asks[asks.length - 1];
+    if (lastAsk) lastAsk.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  }
+});
+
+/* sources modal open/close */
+const modalRoot = document.getElementById('modalRoot');
+modalRoot.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-wrap') || e.target.closest('.modal-x')) closeSources();
+});
+addEventListener('keydown', e => { if (e.key === 'Escape' && modalRoot.firstChild) closeSources(); });
+
+/* the charter lives on its own page: #charter swaps the feed out for it */
+const charterEl = document.getElementById('charterPage');
+const footEl = document.querySelector('.foot-min');
+function route() {
+  if (PAGE_STORY_ID) return;
+  const onCharter = location.hash === '#charter';
+  charterEl.hidden = !onCharter;
+  feedEl.style.display = onCharter ? 'none' : '';
+  if (topEl) topEl.style.display = onCharter ? 'none' : '';
+  if (footEl) footEl.style.display = onCharter ? 'none' : '';
+  if (onCharter) scrollTo(0, 0);
+}
+addEventListener('hashchange', route);
+route();
+
+/* details open-state survives re-renders (toggle doesn't bubble — capture) */
+feedEl.addEventListener('toggle', e => {
+  const key = e.target.dataset && e.target.dataset.dd;
+  if (key) ddState[key] = e.target.open;
+}, true);
+
+feedEl.addEventListener('submit', e => {
+  e.preventDefault();
+  const form = e.target, input = form.querySelector('input'), val = input.value.trim();
+  if (!val) return;
+
+  if (form.dataset.intake) {
+    intake = { url: val, stage: 0 };
+    render();
+    const tick = () => {
+      intake.stage++;
+      render();
+      if (intake.stage < STAGES.length) setTimeout(tick, reduced ? 0 : 620);
+    };
+    setTimeout(tick, reduced ? 0 : 620);
+    return;
+  }
+  if (form.dataset.cmt) {
+    (extraComments[form.dataset.cmt] ||= []).push({ who: 'You', when: 'just now', score: 27, text: val, score: 1 });
+    render();
+    return;
+  }
+  const out = form.parentElement.querySelector('[data-askout]');
+  input.value = '';
+  out.innerHTML = `<div class="working" style="margin-top:11px"><span class="dot"></span>researching “${esc(val)}”…</div>`;
+  setTimeout(() => {
+    out.innerHTML = `<div class="deep-a"><div class="deep-q">${esc(val)}</div><div class="deep-t">In the live product this comes back with a sourced answer in about twenty seconds and posts it to the thread for everyone. This prototype ships with pre-researched answers only — open any question above to see the format a real answer arrives in.</div></div>`;
+  }, reduced ? 0 : 1100);
+});
+
+renderTopics();
+render();
+</script>
+</body>
+</html>
